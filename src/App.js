@@ -7,6 +7,7 @@ import {
 	Navigate,
 } from 'react-router-dom';
 import Navbar from './components/Navbar';
+import Menu from './components/Menu';
 import './App.scss';
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
 	return (
 		<Router>
 			<Navbar />
+			<Menu />
 		</Router>
 	);
 }
