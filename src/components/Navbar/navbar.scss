@@ -1,0 +1,50 @@
+.MuiToolbar-root {
+	box-sizing: border-box;
+	background-color: black;
+	color: #6d41a1;
+	justify-content: space-between;
+	transition: all 1s ease;
+
+	h4 {
+		font-weight: 500;
+	}
+
+	.hamburger {
+		width: 18px;
+		height: 13px;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		cursor: pointer;
+
+		span {
+			width: 100%;
+			height: 2px;
+			background: #6d41a1;
+			transform-origin: left;
+			transition: all 1s ease;
+		}
+	}
+
+	&.active {
+		background: #6d41a1;
+		color: whitesmoke;
+
+		.hamburger {
+			span {
+				width: 20px;
+				&:first-child {
+					background: whitesmoke;
+					transform: rotate(35deg);
+				}
+				&:nth-child(2) {
+					opacity: 0;
+				}
+				&:last-child {
+					background: whitesmoke;
+					transform: rotate(-35deg);
+				}
+			}
+		}
+	}
+}
