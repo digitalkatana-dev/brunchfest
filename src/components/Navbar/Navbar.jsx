@@ -22,7 +22,7 @@ const Navbar = () => {
 	return (
 		<AppBar position='static'>
 			<Toolbar className={menuOpen ? 'navbar active' : 'navbar'}>
-				{user ? <h4>Hello, {user.name}!</h4> : <div></div>}
+				{user ? <h4>Hello, {user.firstName}!</h4> : <div></div>}
 				{user ? (
 					<Button color='inherit' onClick={handleLogout}>
 						Logout

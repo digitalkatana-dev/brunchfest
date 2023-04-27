@@ -1,11 +1,12 @@
 .MuiPaper-root.menu {
 	width: 320px;
-	height: 380px;
+	max-height: 450px;
 	position: fixed;
-	top: -380px;
+	top: -450px;
 	right: 10px;
 	z-index: 2;
 	display: flex;
+	padding: 20px 0;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
@@ -16,11 +17,7 @@
 		top: 60px;
 	}
 
-	.txt {
-		color: whitesmoke;
-	}
-
-	.title-icon {
+	.title-icon.green {
 		color: green;
 	}
 }

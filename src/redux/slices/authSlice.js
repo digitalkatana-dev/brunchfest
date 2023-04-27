@@ -65,12 +65,12 @@ export const authAdapter = createEntityAdapter();
 const initialState = authAdapter.getInitialState({
 	loading: false,
 	authType: 'Login',
-	name: '',
+	firstName: '',
+	lastName: '',
 	email: '',
 	password: '',
 	show: false,
 	user: null,
-	// user: { name: 'Big John' },
 	success: null,
 	errors: null,
 });
@@ -82,8 +82,11 @@ export const authSlice = createSlice({
 		setAuthType: (state, action) => {
 			state.authType = action.payload;
 		},
-		setName: (state, action) => {
-			state.name = action.payload;
+		setFirstName: (state, action) => {
+			state.firstName = action.payload;
+		},
+		setLastName: (state, action) => {
+			state.lastName = action.payload;
 		},
 		setEmail: (state, action) => {
 			state.email = action.payload;
@@ -97,6 +100,12 @@ export const authSlice = createSlice({
 		setErrors: (state, action) => {
 			state.errors = action.payload;
 		},
+		clearForm: (state) => {
+			state.firstName = '';
+			state.lastName = '';
+			state.email = '';
+			state.password = '';
+		},
 		clearSuccess: (state) => {
 			state.success = null;
 		},
@@ -106,7 +115,8 @@ export const authSlice = createSlice({
 		logout: (state) => {
 			state.loading = false;
 			state.authType = 'Login';
-			state.name = '';
+			state.firstName = '';
+			state.lastName = '';
 			state.email = '';
 			state.password = '';
 			state.user = null;
@@ -124,7 +134,8 @@ export const authSlice = createSlice({
 			})
 			.addCase(register.fulfilled, (state, action) => {
 				state.loading = false;
-				state.name = '';
+				state.firstName = '';
+				state.lastName = '';
 				state.email = '';
 				state.password = '';
 				state.user = action.payload;
@@ -184,13 +195,15 @@ export const authSlice = createSlice({
 
 export const {
 	setAuthType,
-	setName,
+	setFirstName,
+	setLastName,
 	setEmail,
 	setPassword,
 	setShow,
 	setErrors,
-	clearErrors,
+	clearForm,
 	clearSuccess,
+	clearErrors,
 	logout,
 } = authSlice.actions;
 

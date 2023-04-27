@@ -1,14 +1,17 @@
 import { Paper, FormControl, IconButton, InputAdornment } from '@mui/material';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
 	register,
 	login,
 	setAuthType,
-	setName,
+	setFirstName,
+	setLastName,
 	setEmail,
 	setPassword,
 	setShow,
 	clearErrors,
+	clearForm,
 } from '../../redux/slices/authSlice';
 import { setMenuOpen } from '../../redux/slices/navSlice';
 import LoginIcon from '@mui/icons-material/Login';
@@ -22,23 +25,33 @@ import './menu.scss';
 
 const Menu = () => {
 	const { menuOpen } = useSelector((state) => state.nav);
-	const { loading, authType, name, email, password, show, errors } =
-		useSelector((state) => state.auth);
+	const {
+		loading,
+		authType,
+		firstName,
+		lastName,
+		email,
+		password,
+		show,
+		user,
+		errors,
+	} = useSelector((state) => state.auth);
 	const dispatch = useDispatch();
-
-	const handleMenu = () => {
-		dispatch(setMenuOpen());
-	};
 
 	const handleChange = (input, value) => {
 		switch (input) {
 			case 'toggle':
 				dispatch(clearErrors());
+				dispatch(clearForm());
 				dispatch(setAuthType(value));
 				break;
 
-			case 'name':
-				dispatch(setName(value));
+			case 'first':
+				dispatch(setFirstName(value));
+				break;
+
+			case 'last':
+				dispatch(setLastName(value));
 				break;
 
 			case 'email':
@@ -68,7 +81,8 @@ const Menu = () => {
 				break;
 
 			case 'Register':
-				data.name = name;
+				data.firstName = firstName;
+				data.lastName = lastName;
 				dispatch(register(data));
 				break;
 
@@ -76,6 +90,12 @@ const Menu = () => {
 				break;
 		}
 	};
+
+	useEffect(() => {
+		if (user) {
+			dispatch(setMenuOpen());
+		}
+	}, [dispatch, user]);
 
 	return (
 		<Paper className={menuOpen ? 'menu active' : 'menu'}>
@@ -96,19 +116,45 @@ const Menu = () => {
 					{authType === 'Register' && (
 						<>
 							<TextInput
-								label='Name'
+								sx={{
+									'& input': {
+										color: 'whitesmoke',
+									},
+								}}
+								label='First Name'
 								size='small'
 								margin='dense'
-								value={name}
-								onChange={(e) => handleChange('name', e.target.value)}
+								value={firstName}
+								onChange={(e) => handleChange('first', e.target.value)}
 								onFocus={() => dispatch(clearErrors())}
 							/>
-							{errors && errors.name && (
-								<h6 className='error'>{errors.name}</h6>
+							{errors && errors.firstName && (
+								<h6 className='error'>{errors.firstName}</h6>
+							)}
+							<TextInput
+								sx={{
+									'& input': {
+										color: 'whitesmoke',
+									},
+								}}
+								label='Last Name'
+								size='small'
+								margin='dense'
+								value={lastName}
+								onChange={(e) => handleChange('last', e.target.value)}
+								onFocus={() => dispatch(clearErrors())}
+							/>
+							{errors && errors.lastName && (
+								<h6 className='error'>{errors.lastName}</h6>
 							)}
 						</>
 					)}
 					<TextInput
+						sx={{
+							'& input': {
+								color: 'whitesmoke',
+							},
+						}}
 						label='Email'
 						size='small'
 						margin='dense'
@@ -118,6 +164,11 @@ const Menu = () => {
 					/>
 					{errors && errors.email && <h6 className='error'>{errors.email}</h6>}
 					<TextInput
+						sx={{
+							'& input': {
+								color: 'whitesmoke',
+							},
+						}}
 						type={show ? 'text' : 'password'}
 						label='Password'
 						size='small'
