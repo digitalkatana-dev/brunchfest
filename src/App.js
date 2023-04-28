@@ -8,6 +8,7 @@ import {
 } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Menu from './components/Menu';
+import Main from './features/Main';
 import './App.scss';
 
 function App() {
@@ -17,6 +18,9 @@ function App() {
 		<Router>
 			<Navbar />
 			<Menu />
+			<Routes>
+				<Route path='/' element={<Main />} />
+			</Routes>
 		</Router>
 	);
 }
