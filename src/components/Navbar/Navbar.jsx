@@ -1,5 +1,6 @@
 import { AppBar, Toolbar, Button } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
+import { clearErrors } from '../../redux/slices/authSlice';
 import { setMenuOpen, setMenuView } from '../../redux/slices/navSlice';
 import { logout } from '../../redux/slices/authSlice';
 import { persistor } from '../../redux/rootStore';
@@ -13,8 +14,9 @@ const Navbar = () => {
 	const handleMenu = () => {
 		dispatch(setMenuOpen());
 		setTimeout(() => {
+			dispatch(clearErrors());
 			dispatch(setMenuView('auth'));
-		}, 2000);
+		}, 1000);
 	};
 
 	const handleLogout = () => {
