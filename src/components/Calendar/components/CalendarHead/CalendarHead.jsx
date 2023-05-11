@@ -1,6 +1,9 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, IconButton } from '@mui/material';
-import { setMonthIndex } from '../../../../redux/slices/calendarSlice';
+import {
+	setMonthIndex,
+	setMonthIndexSmall,
+} from '../../../../redux/slices/calendarSlice';
 import dayjs from 'dayjs';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -20,6 +23,7 @@ const CalendarHead = () => {
 
 	const handleToday = () => {
 		dispatch(setMonthIndex(dayjs().month()));
+		dispatch(setMonthIndexSmall(dayjs().month()));
 	};
 
 	return (

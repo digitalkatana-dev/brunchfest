@@ -8,6 +8,8 @@ const initialState = calendarAdapter.getInitialState({
 	date: '',
 	currentMonth: getMonth(),
 	monthIndex: dayjs().month(),
+	currentMonthSmall: getMonth(),
+	monthIndexSmall: dayjs().month(),
 });
 
 export const calendarSlice = createSlice({
@@ -23,10 +25,21 @@ export const calendarSlice = createSlice({
 		setMonthIndex: (state, action) => {
 			state.monthIndex = action.payload;
 		},
+		setCurrentMonthSmall: (state, action) => {
+			state.currentMonthSmall = getMonth(action.payload);
+		},
+		setMonthIndexSmall: (state, action) => {
+			state.monthIndexSmall = action.payload;
+		},
 	},
 });
 
-export const { setDate, setMonthIndex, setCurrentMonth } =
-	calendarSlice.actions;
+export const {
+	setDate,
+	setMonthIndex,
+	setCurrentMonth,
+	setCurrentMonthSmall,
+	setMonthIndexSmall,
+} = calendarSlice.actions;
 
 export default calendarSlice.reducer;
