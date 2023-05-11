@@ -1,19 +1,24 @@
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getMonth } from '../../util/helpers';
+import { setCurrentMonth } from '../../redux/slices/calendarSlice';
 import CalendarHead from './components/CalendarHead';
 import Month from './components/Month';
 import Sidebar from './components/Sidebar';
-// import './calendar.scss';
+import './calendar.scss';
 
 const Calendar = () => {
-	const { currentMonth } = useSelector((state) => state.calendar);
+	const { currentMonth, monthIndex } = useSelector((state) => state.calendar);
 	const dispatch = useDispatch();
+
+	useEffect(() => {
+		dispatch(setCurrentMonth(monthIndex));
+	}, [dispatch, monthIndex]);
 
 	return (
 		<>
-			<div className='h-screen flex flex-columns'>
+			<div className='calendar'>
 				<CalendarHead />
-				<div className='flex flex-1'>
+				<div className='container'>
 					<Sidebar />
 					<Month month={currentMonth} />
 				</div>

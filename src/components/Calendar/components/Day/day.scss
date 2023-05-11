@@ -1,0 +1,24 @@
+p {
+	font-size: x-small;
+	font-family: 'Open Sans', sans-serif;
+}
+
+.cell {
+	height: 70px;
+	width: 70px;
+	padding: 5px;
+	border: 1px solid lightgrey;
+
+	.abv {
+		margin-bottom: 1px;
+	}
+
+	.today {
+		width: 13px;
+		background-color: steelblue;
+		color: whitesmoke;
+		border-radius: 100%;
+		padding: 2px;
+		text-align: center;
+	}
+}

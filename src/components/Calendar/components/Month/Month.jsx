@@ -1,16 +1,19 @@
-import React from 'react';
+import { Fragment } from 'react';
+import { Grid } from '@mui/material';
 import Day from '../Day';
 import './month.scss';
 
 const Month = ({ month }) => {
 	return (
-		<div className='flex-1 grid grid-cols-7 grid-rows-5'>
+		<div className='month'>
 			{month.map((row, i) => (
-				<React.Fragment key={i}>
-					{row.map((day, idx) => (
-						<Day key={idx} day={day} />
-					))}
-				</React.Fragment>
+				<Fragment key={i}>
+					<Grid container columns={7}>
+						{row.map((day, idx) => (
+							<Day key={idx} day={day} rowIdx={i} />
+						))}
+					</Grid>
+				</Fragment>
 			))}
 		</div>
 	);

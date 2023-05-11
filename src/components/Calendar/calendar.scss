@@ -1,9 +1,34 @@
 .calendar {
-	height: calc(100vh / 4);
+	// border: 2px solid firebrick;
 
 	.container {
 		display: flex;
-		flex: 1;
-		border: 2px solid red;
+		// border: 2px solid chartreuse;
+	}
+}
+
+@media only screen and (min-width: 500px) {
+	.calendar {
+		max-width: 95%;
+	}
+}
+@media only screen and (min-width: 600px) {
+	.calendar {
+		max-width: 90%;
+	}
+}
+@media only screen and (min-width: 900px) {
+	.calendar {
+		max-width: 60%;
+	}
+}
+@media only screen and (min-width: 1200px) {
+	.calendar {
+		max-width: 50%;
+	}
+}
+@media only screen and (min-width: 1536px) {
+	.calendar {
+		max-width: 35%;
 	}
 }
