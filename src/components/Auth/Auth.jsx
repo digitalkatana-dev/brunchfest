@@ -6,6 +6,7 @@ import {
 	setAuthType,
 	setFirstName,
 	setLastName,
+	setPhone,
 	setEmail,
 	setPassword,
 	setShow,
@@ -27,6 +28,7 @@ const Auth = () => {
 		authType,
 		firstName,
 		lastName,
+		phone,
 		email,
 		password,
 		show,
@@ -48,6 +50,10 @@ const Auth = () => {
 
 			case 'last':
 				dispatch(setLastName(value));
+				break;
+
+			case 'phone':
+				dispatch(setPhone(value));
 				break;
 
 			case 'email':
@@ -79,6 +85,7 @@ const Auth = () => {
 			case 'Register':
 				data.firstName = firstName;
 				data.lastName = lastName;
+				data.phone = phone;
 				dispatch(register(data));
 				break;
 
@@ -137,6 +144,18 @@ const Auth = () => {
 							{errors && errors.lastName && (
 								<h6 className='error'>{errors.lastName}</h6>
 							)}
+							<TextInput
+								sx={{ '& input': { color: 'whitesmoke' } }}
+								label='Mobile Number'
+								size='small'
+								margin='dense'
+								value={phone}
+								onChange={(e) => handleChange('phone', e.target.value)}
+								onFocus={() => dispatch(clearErrors())}
+							/>
+							{errors && errors.phone && (
+								<h6 className='error'>{errors.phone}</h6>
+							)}
 						</>
 					)}
 					<TextInput
@@ -190,9 +209,11 @@ const Auth = () => {
 					<Button type='submit' loading={loading} label='SUBMIT' />
 				</FormControl>
 			</form>
-			<h6 className='link' onClick={() => dispatch(setMenuView('forgot'))}>
-				Forgot Password
-			</h6>
+			{authType === 'Login' && (
+				<h6 className='link' onClick={() => dispatch(setMenuView('forgot'))}>
+					Forgot Password
+				</h6>
+			)}
 		</>
 	);
 };

@@ -1,0 +1,9 @@
+.calendar {
+	height: calc(100vh / 4);
+
+	.container {
+		display: flex;
+		flex: 1;
+		border: 2px solid red;
+	}
+}

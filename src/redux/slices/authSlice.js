@@ -67,6 +67,7 @@ const initialState = authAdapter.getInitialState({
 	authType: 'Login',
 	firstName: '',
 	lastName: '',
+	phone: '',
 	email: '',
 	password: '',
 	show: false,
@@ -88,6 +89,9 @@ export const authSlice = createSlice({
 		setLastName: (state, action) => {
 			state.lastName = action.payload;
 		},
+		setPhone: (state, action) => {
+			state.phone = action.payload;
+		},
 		setEmail: (state, action) => {
 			state.email = action.payload;
 		},
@@ -103,6 +107,7 @@ export const authSlice = createSlice({
 		clearForm: (state) => {
 			state.firstName = '';
 			state.lastName = '';
+			state.phone = '';
 			state.email = '';
 			state.password = '';
 		},
@@ -117,6 +122,7 @@ export const authSlice = createSlice({
 			state.authType = 'Login';
 			state.firstName = '';
 			state.lastName = '';
+			state.phone = '';
 			state.email = '';
 			state.password = '';
 			state.user = null;
@@ -136,6 +142,7 @@ export const authSlice = createSlice({
 				state.loading = false;
 				state.firstName = '';
 				state.lastName = '';
+				state.phone = '';
 				state.email = '';
 				state.password = '';
 				state.user = action.payload;
@@ -197,6 +204,7 @@ export const {
 	setAuthType,
 	setFirstName,
 	setLastName,
+	setPhone,
 	setEmail,
 	setPassword,
 	setShow,
