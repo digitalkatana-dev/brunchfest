@@ -1,27 +1,51 @@
-import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
+import {
+	createEntityAdapter,
+	createAsyncThunk,
+	createSlice,
+} from '@reduxjs/toolkit';
 import { getMonth } from '../../util/helpers';
 import { labelClasses } from '../../util/data';
 import dayjs from 'dayjs';
+import brunchApi from '../../api/brunchApi';
+
+export const createEvent = createAsyncThunk(
+	'calendar/create_event',
+	async (eventInfo, { rejectWithValue }) => {
+		try {
+			const res = await brunchApi.post('/events', eventInfo);
+			return res.data;
+		} catch (err) {
+			return rejectWithValue(err.response.data);
+		}
+	}
+);
 
 export const calendarAdapter = createEntityAdapter();
 const initialState = calendarAdapter.getInitialState({
 	loading: false,
+	actionType: null,
 	open: false,
 	currentMonth: getMonth(),
 	monthIndex: dayjs().month(),
 	currentMonthSmall: getMonth(),
 	monthIndexSmall: dayjs().month(),
 	daySelected: null,
+	eventTime: '',
+	eventLoc: '',
 	headcount: '',
 	selectedLabel: labelClasses[0],
+	selectedEvent: null,
 	savedEvents: [],
-	// dayEvents: [],
+	errors: null,
 });
 
 export const calendarSlice = createSlice({
 	name: 'calendar',
 	initialState,
 	reducers: {
+		setActionType: (state, action) => {
+			state.actionType = action.payload;
+		},
 		toggleOpen: (state) => {
 			state.open = !state.open;
 		},
@@ -40,11 +64,20 @@ export const calendarSlice = createSlice({
 		setDaySelected: (state, action) => {
 			state.daySelected = action.payload;
 		},
+		setEventTime: (state, action) => {
+			state.eventTime = action.payload;
+		},
+		setEventLoc: (state, action) => {
+			state.eventLoc = action.payload;
+		},
 		setHeadcount: (state, action) => {
 			state.headcount = action.payload;
 		},
 		setSelectedLabel: (state, action) => {
 			state.selectedLabel = action.payload;
+		},
+		setSelectedEvent: (state, action) => {
+			state.selectedEvent = action.payload;
 		},
 		addEvent: (state, action) => {
 			state.savedEvents = [...state.savedEvents, action.payload];
@@ -67,25 +100,40 @@ export const calendarSlice = createSlice({
 
 			state.savedEvents = updated();
 		},
-		// setDayEvents: (state, action) => {
-		// 	state.dayEvents = action.payload;
-		// },
+	},
+	extraReducers: (builder) => {
+		builder
+			.addCase(createEvent.pending, (state) => {
+				state.loading = true;
+				state.errors = null;
+			})
+			.addCase(createEvent.fulfilled, (state, action) => {
+				state.loading = false;
+				state.savedEvents = [...state.savedEvents, action.payload];
+			})
+			.addCase(createEvent.rejected, (state, action) => {
+				state.loading = false;
+				state.errors = action.payload;
+			});
 	},
 });
 
 export const {
+	setActionType,
 	toggleOpen,
 	setMonthIndex,
 	setCurrentMonth,
 	setCurrentMonthSmall,
 	setMonthIndexSmall,
 	setDaySelected,
+	setEventTime,
+	setEventLoc,
 	setHeadcount,
 	setSelectedLabel,
+	setSelectedEvent,
 	addEvent,
 	updateEvent,
 	deleteEvent,
-	// setDayEvents,
 } = calendarSlice.actions;
 
 export default calendarSlice.reducer;

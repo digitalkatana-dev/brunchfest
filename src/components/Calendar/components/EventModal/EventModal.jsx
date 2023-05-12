@@ -11,13 +11,17 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import {
 	toggleOpen,
+	setEventTime,
+	setEventLoc,
 	setHeadcount,
 	setSelectedLabel,
+	createEvent,
 	addEvent,
 } from '../../../../redux/slices/calendarSlice';
 import { labelClasses } from '../../../../util/data';
 import DragHandleIcon from '@mui/icons-material/DragHandle';
 import CloseIcon from '@mui/icons-material/Close';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import ScheduleIcon from '@mui/icons-material/Schedule';
 import MyLocationIcon from '@mui/icons-material/MyLocation';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
@@ -26,9 +30,16 @@ import './eventModal.scss';
 
 const EventModal = () => {
 	const { user } = useSelector((state) => state.auth);
-	const { open, daySelected, headcount, selectedLabel } = useSelector(
-		(state) => state.calendar
-	);
+	const {
+		open,
+		daySelected,
+		eventTime,
+		eventLoc,
+		headcount,
+		selectedLabel,
+		selectedEvent,
+		actionType,
+	} = useSelector((state) => state.calendar);
 	const tagStyle = (item) => {
 		const data = {
 			width: 15,
@@ -51,18 +62,36 @@ const EventModal = () => {
 		dispatch(toggleOpen());
 	};
 
+	const handleChange = (input, value) => {
+		switch (input) {
+			case 'time':
+				dispatch(setEventTime(value));
+				break;
+
+			case 'loc':
+				dispatch(setEventLoc(value));
+				break;
+
+			case 'count':
+				dispatch(setHeadcount(value));
+				break;
+
+			default:
+				break;
+		}
+	};
+
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		const data = {
-			id: Date.now(),
-			eventId: 5,
+			date: daySelected.format('M/DD/YYYY'),
+			time: eventTime,
+			location: eventLoc,
 			label: selectedLabel,
-			headcount,
-			day: daySelected.valueOf(),
 		};
-
-		dispatch(addEvent(data));
-		dispatch(setHeadcount(''));
+		dispatch(createEvent(data));
+		// dispatch(addEvent(data));
+		// dispatch(setHeadcount(''));
 		dispatch(toggleOpen());
 	};
 
@@ -75,7 +104,63 @@ const EventModal = () => {
 				</IconButton>
 			</DialogTitle>
 			<DialogContent>
-				{user ? (
+				{user && actionType === 'create' ? (
+					<>
+						<div className='event-date'>
+							<CalendarMonthIcon className='icon' />
+							<p>{daySelected?.format('dddd, MMMM DD')}</p>
+						</div>
+						<TextField
+							label='Time'
+							variant='standard'
+							fullWidth
+							onChange={(e) => handleChange('time', e.target.value)}
+						/>
+						<TextField
+							label='Location'
+							variant='standard'
+							fullWidth
+							onChange={(e) => handleChange('loc', e.target.value)}
+						/>
+						<div className='event-tags'>
+							<BookmarkBorderIcon className='icon' />
+							<div className='tag-swatch'>
+								{labelClasses.map((item, i) => (
+									<span
+										key={i}
+										onClick={() => dispatch(setSelectedLabel(item))}
+										style={tagStyle(item)}
+									>
+										{selectedLabel === item && <CheckIcon fontSize='5' />}
+									</span>
+								))}
+							</div>
+						</div>
+					</>
+				) : user && actionType === 'rsvp' ? (
+					<>
+						<div className='event-date'>
+							<CalendarMonthIcon className='icon' />
+							<p>{daySelected?.format('dddd, MMMM DD')}</p>
+						</div>
+						<div className='event-time'>
+							<ScheduleIcon className='icon' />
+							<p>10:00 am</p>
+						</div>
+						<DialogContentText>
+							Hello, {user.firstName}! How many in your party?
+						</DialogContentText>
+						<TextField
+							label='Headcount'
+							variant='standard'
+							fullWidth
+							onChange={(e) => dispatch(handleChange('count', e.target.value))}
+						/>
+					</>
+				) : (
+					<DialogContentText>Sign in to RSVP!</DialogContentText>
+				)}
+				{/* {user ? (
 					<>
 						<div className='event-date'>
 							<ScheduleIcon className='icon' />
@@ -111,7 +196,7 @@ const EventModal = () => {
 					</>
 				) : (
 					<DialogContentText>Sign in to RSVP!</DialogContentText>
-				)}
+				)} */}
 			</DialogContent>
 			<DialogActions>
 				<Button onClick={handleSubmit}>Submit</Button>

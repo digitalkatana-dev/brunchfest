@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
 	setDaySelected,
 	toggleOpen,
+	setSelectedEvent,
 } from '../../../../redux/slices/calendarSlice';
 import dayjs from 'dayjs';
 import TouchableOpacity from '../../../TouchableOpacity';
@@ -25,16 +26,15 @@ const Day = ({ day, rowIdx }) => {
 
 	useEffect(() => {
 		const events = savedEvents.filter(
-			(event) => dayjs(event.day).format('MM-DD-YY') === day.format('MM-DD-YY')
+			(event) => dayjs(event.date).format('MM-DD-YY') === day.format('MM-DD-YY')
 		);
-		console.log('new events', events);
 		setDayEvents(events);
 	}, [savedEvents, day]);
 
 	return (
 		<TouchableOpacity
 			onClick={handleClick}
-			inlineStyle={{ border: '1px solid lightgrey' }}
+			inlineStyle={{ border: '1px solid lightgrey', zIndex: 1 }}
 		>
 			<Grid item xs={1} className='cell'>
 				<header>
@@ -44,15 +44,17 @@ const Day = ({ day, rowIdx }) => {
 				{dayEvents?.map((item, idx) => (
 					<div
 						key={idx}
+						onClick={() => dispatch(setSelectedEvent(item))}
 						style={{
 							backgroundColor: `${item.label}`,
 							width: 'inherit',
 							borderRadius: '40px',
 							fontSize: 'xx-small',
 							color: 'whitesmoke',
+							zIndex: 5,
 						}}
 					>
-						{item.headcount}
+						{item.location}
 					</div>
 				))}
 			</Grid>
