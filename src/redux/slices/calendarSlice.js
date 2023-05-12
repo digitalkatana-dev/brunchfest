@@ -32,6 +32,18 @@ export const getAllEvents = createAsyncThunk(
 	}
 );
 
+export const attendEvent = createAsyncThunk(
+	'calendar/rsvp',
+	async (eventInfo, { rejectWithValue }) => {
+		try {
+			const res = await brunchApi.put('/events/add-attendee', eventInfo);
+			return res.data;
+		} catch (err) {
+			return rejectWithValue(err.response.data);
+		}
+	}
+);
+
 export const calendarAdapter = createEntityAdapter();
 const initialState = calendarAdapter.getInitialState({
 	loading: false,
@@ -46,8 +58,9 @@ const initialState = calendarAdapter.getInitialState({
 	eventLoc: '',
 	headcount: '',
 	selectedLabel: labelClasses[0],
-	selectedEvent: null,
 	savedEvents: null,
+	selectedEvent: null,
+	success: null,
 	errors: null,
 });
 
@@ -112,6 +125,12 @@ export const calendarSlice = createSlice({
 
 			state.savedEvents = updated();
 		},
+		clearSuccess: (state) => {
+			state.success = null;
+		},
+		clearErrors: (state) => {
+			state.errors = null;
+		},
 	},
 	extraReducers: (builder) => {
 		builder
@@ -138,6 +157,18 @@ export const calendarSlice = createSlice({
 			.addCase(getAllEvents.rejected, (state, action) => {
 				state.loading = false;
 				state.errors = action.payload;
+			})
+			.addCase(attendEvent.pending, (state) => {
+				state.loading = true;
+				state.errors = null;
+			})
+			.addCase(attendEvent.fulfilled, (state, action) => {
+				state.loading = false;
+				state.success = action.payload;
+			})
+			.addCase(attendEvent.rejected, (state, action) => {
+				state.loading = false;
+				state.errors = action.payload;
 			});
 	},
 });
@@ -158,6 +189,8 @@ export const {
 	addEvent,
 	updateEvent,
 	deleteEvent,
+	clearSuccess,
+	clearErrors,
 } = calendarSlice.actions;
 
 export default calendarSlice.reducer;

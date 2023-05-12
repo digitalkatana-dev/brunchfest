@@ -4,6 +4,11 @@
 	align-items: center;
 }
 
+.content-switch {
+	display: flex;
+	align-items: center;
+}
+
 .event-date,
 .event-loc,
 .event-tags {
@@ -12,8 +17,12 @@
 	margin-bottom: 10px;
 
 	.icon {
-		margin-right: 4px;
+		margin-right: 7px;
 	}
+}
+
+.add-on {
+	color: black;
 }
 
 .tag-swatch {

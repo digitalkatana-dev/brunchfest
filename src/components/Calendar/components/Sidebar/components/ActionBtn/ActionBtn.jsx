@@ -1,8 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import {
-	toggleOpen,
-	setActionType,
-} from '../../../../../../redux/slices/calendarSlice';
+import { toggleOpen } from '../../../../../../redux/slices/calendarSlice';
 import './actionBtn.scss';
 
 const ActionBtn = ({ label, actionType }) => {
@@ -11,7 +8,6 @@ const ActionBtn = ({ label, actionType }) => {
 
 	const handleClick = () => {
 		if (daySelected) {
-			dispatch(setActionType(actionType));
 			dispatch(toggleOpen());
 		}
 	};
