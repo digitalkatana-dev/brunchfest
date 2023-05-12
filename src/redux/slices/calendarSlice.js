@@ -20,6 +20,18 @@ export const createEvent = createAsyncThunk(
 	}
 );
 
+export const getAllEvents = createAsyncThunk(
+	'calendar/get_all_events',
+	async (eventInfo, { rejectWithValue }) => {
+		try {
+			const res = await brunchApi.get('/events');
+			return res.data;
+		} catch (err) {
+			return rejectWithValue(err.response.data);
+		}
+	}
+);
+
 export const calendarAdapter = createEntityAdapter();
 const initialState = calendarAdapter.getInitialState({
 	loading: false,
@@ -35,7 +47,7 @@ const initialState = calendarAdapter.getInitialState({
 	headcount: '',
 	selectedLabel: labelClasses[0],
 	selectedEvent: null,
-	savedEvents: [],
+	savedEvents: null,
 	errors: null,
 });
 
@@ -112,6 +124,18 @@ export const calendarSlice = createSlice({
 				state.savedEvents = [...state.savedEvents, action.payload];
 			})
 			.addCase(createEvent.rejected, (state, action) => {
+				state.loading = false;
+				state.errors = action.payload;
+			})
+			.addCase(getAllEvents.pending, (state) => {
+				state.loading = true;
+				state.errors = null;
+			})
+			.addCase(getAllEvents.fulfilled, (state, action) => {
+				state.loading = false;
+				state.savedEvents = action.payload;
+			})
+			.addCase(getAllEvents.rejected, (state, action) => {
 				state.loading = false;
 				state.errors = action.payload;
 			});

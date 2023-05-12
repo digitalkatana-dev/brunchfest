@@ -25,7 +25,7 @@ const Day = ({ day, rowIdx }) => {
 	};
 
 	useEffect(() => {
-		const events = savedEvents.filter(
+		const events = savedEvents?.filter(
 			(event) => dayjs(event.date).format('MM-DD-YY') === day.format('MM-DD-YY')
 		);
 		setDayEvents(events);
@@ -41,9 +41,9 @@ const Day = ({ day, rowIdx }) => {
 					{rowIdx === 0 && <p className='abv'>{day.format('ddd')}</p>}
 					<p className={`${getCurrentDayClass()}`}>{day.format('D')}</p>
 				</header>
-				{dayEvents?.map((item, idx) => (
+				{dayEvents?.map((item) => (
 					<div
-						key={idx}
+						key={item._id}
 						onClick={() => dispatch(setSelectedEvent(item))}
 						style={{
 							backgroundColor: `${item.label}`,
