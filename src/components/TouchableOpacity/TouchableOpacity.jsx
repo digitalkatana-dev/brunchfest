@@ -1,9 +1,9 @@
 import { CircularProgress } from '@mui/material';
 import './touchable.scss';
 
-const TouchableOpacity = ({ loading, onClick, children }) => {
+const TouchableOpacity = ({ inlineStyle, loading, onClick, children }) => {
 	return (
-		<button className='pressable' onClick={onClick}>
+		<button className='pressable' style={inlineStyle} onClick={onClick}>
 			{loading ? <CircularProgress /> : children}
 		</button>
 	);

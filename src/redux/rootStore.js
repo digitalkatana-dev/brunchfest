@@ -17,13 +17,19 @@ import navReducer from './slices/navSlice';
 const authPersistConfig = {
 	key: 'auth',
 	storage,
-	whitelist: ['sexy'],
+	whitelist: ['user'],
+};
+
+const calendarPersistConfig = {
+	key: 'calendar',
+	storage,
+	whitelist: ['savedEvents'],
 };
 
 export const store = configureStore({
 	reducer: {
 		auth: persistReducer(authPersistConfig, authReducer),
-		calendar: calendarReducer,
+		calendar: persistReducer(calendarPersistConfig, calendarReducer),
 		nav: navReducer,
 	},
 	middleware: (getDefaultMiddleware) =>

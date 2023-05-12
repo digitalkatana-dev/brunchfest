@@ -4,6 +4,7 @@ import { setCurrentMonth } from '../../redux/slices/calendarSlice';
 import CalendarHead from './components/CalendarHead';
 import Month from './components/Month';
 import Sidebar from './components/Sidebar';
+import EventModal from './components/EventModal';
 import './calendar.scss';
 
 const Calendar = () => {
@@ -16,6 +17,7 @@ const Calendar = () => {
 
 	return (
 		<>
+			<EventModal />
 			<div className='calendar'>
 				<CalendarHead />
 				<div className='container'>

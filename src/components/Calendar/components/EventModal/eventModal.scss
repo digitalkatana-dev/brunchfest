@@ -1,0 +1,23 @@
+.title {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.event-date,
+.event-loc,
+.event-tags {
+	display: flex;
+	align-items: center;
+	margin-bottom: 10px;
+
+	.icon {
+		margin-right: 4px;
+	}
+}
+
+.tag-swatch {
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+}

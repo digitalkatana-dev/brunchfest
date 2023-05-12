@@ -4,21 +4,32 @@ p {
 }
 
 .cell {
-	height: 70px;
-	width: 70px;
-	padding: 5px;
-	border: 1px solid lightgrey;
+	height: 54px;
+	width: 54px;
+
+	header {
+		margin-top: 5px;
+		margin-left: 5px;
+	}
 
 	.abv {
 		margin-bottom: 1px;
 	}
 
-	.today {
+	.today,
+	.selected-day {
 		width: 13px;
-		background-color: steelblue;
 		color: whitesmoke;
 		border-radius: 100%;
 		padding: 2px;
 		text-align: center;
+	}
+
+	.today {
+		background-color: steelblue;
+	}
+
+	.selected-day {
+		background-color: indigo;
 	}
 }
