@@ -1,5 +1,5 @@
 import { Alert, Snackbar } from '@mui/material';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
 	setCurrentMonth,
@@ -19,29 +19,25 @@ const Calendar = () => {
 	const [open, setOpen] = useState(false);
 	const dispatch = useDispatch();
 
-	const clearAll = useCallback(() => {
-		setTimeout(() => {
-			dispatch(clearSuccess());
-			dispatch(clearErrors());
-		}, 15000);
-	}, [dispatch]);
-
 	useEffect(() => {
 		if (!savedEvents) {
 			dispatch(getAllEvents());
 		}
-	}, [savedEvents, dispatch]);
+	}, [savedEvents]);
 
 	useEffect(() => {
 		dispatch(setCurrentMonth(monthIndex));
-	}, [dispatch, monthIndex]);
+	}, [monthIndex]);
 
 	useEffect(() => {
 		if (success || errors?.event) {
 			setOpen(true);
+			setTimeout(() => {
+				dispatch(clearSuccess());
+				dispatch(clearErrors());
+			}, 8000);
 		}
-		clearAll();
-	}, [success, errors, clearAll]);
+	}, [success, errors]);
 
 	return (
 		<>

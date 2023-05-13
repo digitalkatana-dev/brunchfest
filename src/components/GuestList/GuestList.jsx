@@ -1,8 +1,17 @@
-import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { setGuestList } from '../../redux/slices/calendarSlice';
 import './guestList.scss';
 
 const GuestList = () => {
-	const { selectedEvent } = useSelector((state) => state.calendar);
+	const { selectedEvent, guestList } = useSelector((state) => state.calendar);
+	const dispatch = useDispatch();
+
+	useEffect(() => {
+		if (selectedEvent) {
+			dispatch(setGuestList(selectedEvent?.attendees));
+		}
+	}, [selectedEvent]);
 
 	return (
 		<div className='guest-list'>
@@ -12,9 +21,9 @@ const GuestList = () => {
 			<div className='container'>
 				<img src='guest-book.png' alt='' />
 				<div className='overlay'>
-					{selectedEvent?.attendees.map((guest) => (
+					{guestList?.map((guest) => (
 						<span key={guest._id}>
-							{guest.name} + {guest.headcount} guests
+							{guest.name} + {guest.headcount - 1} guests
 						</span>
 					))}
 				</div>

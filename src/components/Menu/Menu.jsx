@@ -15,7 +15,7 @@ const Menu = () => {
 		if (user) {
 			dispatch(setMenuOpen());
 		}
-	}, [dispatch, user]);
+	}, [user]);
 
 	return (
 		<Paper className={menuOpen ? 'menu active' : 'menu'}>

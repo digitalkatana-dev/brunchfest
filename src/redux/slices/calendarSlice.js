@@ -109,10 +109,11 @@ const initialState = calendarAdapter.getInitialState({
 	daySelected: null,
 	eventTime: '',
 	eventLoc: '',
-	headcount: '',
 	selectedLabel: labelClasses[0],
+	headcount: '',
 	savedEvents: null,
 	selectedEvent: null,
+	guestList: null,
 	myEvents: [],
 	success: null,
 	errors: null,
@@ -157,6 +158,13 @@ export const calendarSlice = createSlice({
 		},
 		setSelectedEvent: (state, action) => {
 			state.selectedEvent = action.payload;
+			state.eventTime = action.payload === null ? '' : action.payload.time;
+			state.eventLoc = action.payload === null ? '' : action.payload.location;
+			state.selectedLabel =
+				action.payload === null ? labelClasses[0] : action.payload.label;
+		},
+		setGuestList: (state, action) => {
+			state.guestList = action.payload;
 		},
 		addMyEvent: (state, action) => {
 			const alreadyAttending = state.myEvents.find(
@@ -223,6 +231,8 @@ export const calendarSlice = createSlice({
 				state.success = action.payload.success;
 				state.savedEvents = action.payload.updatedAll;
 				state.selectedEvent = action.payload.updatedEvent;
+				state.guestList = action.payload.updatedEvent.attendees;
+				state.headcount = '';
 			})
 			.addCase(attendEvent.rejected, (state, action) => {
 				state.loading = false;
@@ -237,6 +247,9 @@ export const calendarSlice = createSlice({
 				state.success = action.payload.deleted;
 				state.savedEvents = action.payload.updated;
 				state.selectedEvent = null;
+				state.eventTime = '';
+				state.eventLoc = '';
+				state.selectedLabel = labelClasses[0];
 			})
 			.addCase(deleteEvent.rejected, (state, action) => {
 				state.loading = false;
@@ -298,6 +311,7 @@ export const {
 	setHeadcount,
 	setSelectedLabel,
 	setSelectedEvent,
+	setGuestList,
 	addMyEvent,
 	removeMyEvent,
 	clearSuccess,

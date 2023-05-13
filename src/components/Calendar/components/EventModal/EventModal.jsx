@@ -27,6 +27,7 @@ import {
 	addMyEvent,
 	removeMyEvent,
 	deleteEvent,
+	setSelectedEvent,
 } from '../../../../redux/slices/calendarSlice';
 import { labelClasses } from '../../../../util/data';
 import dayjs from 'dayjs';
@@ -58,15 +59,14 @@ const EventModal = () => {
 	const [checked, setChecked] = useState(false);
 	const tagStyle = (item) => {
 		const data = {
-			width: 15,
-			height: 15,
+			width: 20,
+			height: 20,
 			display: 'flex',
 			justifyContent: 'center',
 			alignItems: 'center',
 			backgroundColor: `${item}`,
 			borderRadius: '100%',
 			color: 'whitesmoke',
-			padding: 2,
 		};
 
 		return data;
@@ -81,6 +81,7 @@ const EventModal = () => {
 
 	const handleClose = () => {
 		dispatch(toggleOpen());
+		dispatch(setSelectedEvent(null));
 	};
 
 	const handleChange = (input, value) => {
@@ -153,6 +154,9 @@ const EventModal = () => {
 			dispatch(createEvent(data));
 		}
 		dispatch(toggleOpen());
+		setTimeout(() => {
+			dispatch(setSelectedEvent(null));
+		}, 1000);
 	};
 
 	return (
@@ -195,7 +199,7 @@ const EventModal = () => {
 									size='small'
 									label='Time'
 									variant='standard'
-									defaultValue={selectedEvent ? selectedEvent.time : eventTime}
+									value={eventTime}
 									onChange={(e) => handleChange('time', e.target.value)}
 									InputProps={{
 										startAdornment: (
@@ -213,9 +217,7 @@ const EventModal = () => {
 									size='small'
 									label='Location'
 									variant='standard'
-									defaultValue={
-										selectedEvent ? selectedEvent.location : eventLoc
-									}
+									value={eventLoc}
 									onChange={(e) => handleChange('loc', e.target.value)}
 									InputProps={{
 										startAdornment: (
@@ -237,19 +239,7 @@ const EventModal = () => {
 												onClick={() => handleChange('label', item)}
 												style={tagStyle(item)}
 											>
-												{selectedEvent ? (
-													<>
-														{selectedEvent.label === item && (
-															<CheckIcon fontSize='5' />
-														)}
-													</>
-												) : (
-													<>
-														{selectedLabel === item && (
-															<CheckIcon fontSize='5' />
-														)}
-													</>
-												)}
+												{selectedLabel === item && <CheckIcon fontSize='4' />}
 											</span>
 										))}
 									</div>
@@ -286,6 +276,7 @@ const EventModal = () => {
 												Hello, {user.firstName}! How many in your party?
 											</DialogContentText>
 											<TextField
+												disabled={!selectedEvent}
 												sx={{ marginTop: '15px' }}
 												size='small'
 												label='Headcount'

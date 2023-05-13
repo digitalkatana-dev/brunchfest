@@ -47,7 +47,7 @@ const Forgot = () => {
 				dispatch(setMenuView('auth'));
 			}, 5000);
 		}
-	}, [dispatch, success]);
+	}, [success]);
 
 	return (
 		<>

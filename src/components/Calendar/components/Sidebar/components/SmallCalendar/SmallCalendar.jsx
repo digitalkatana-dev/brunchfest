@@ -11,7 +11,7 @@ const SmallCalendar = () => {
 
 	useEffect(() => {
 		dispatch(setCurrentMonthSmall(monthIndexSmall));
-	}, [dispatch, monthIndexSmall]);
+	}, [monthIndexSmall]);
 
 	return (
 		<div className='small-cal'>

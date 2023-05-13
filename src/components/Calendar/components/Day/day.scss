@@ -18,11 +18,14 @@ p {
 
 	.today,
 	.selected-day {
-		width: 13px;
+		width: 16px;
+		height: 16px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
 		color: whitesmoke;
 		border-radius: 100%;
-		padding: 2px;
-		text-align: center;
+		padding: 5px;
 	}
 
 	.today {
