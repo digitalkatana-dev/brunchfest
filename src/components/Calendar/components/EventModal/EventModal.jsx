@@ -24,8 +24,6 @@ import {
 	attendEvent,
 	cancelRsvp,
 	updateEvent,
-	addMyEvent,
-	removeMyEvent,
 	deleteEvent,
 	setSelectedEvent,
 } from '../../../../redux/slices/calendarSlice';
@@ -116,7 +114,6 @@ const EventModal = () => {
 			eventId: selectedEvent?._id,
 		};
 		dispatch(cancelRsvp(data));
-		dispatch(removeMyEvent(selectedEvent?._id));
 	};
 
 	const handleDelete = () => {
@@ -133,7 +130,6 @@ const EventModal = () => {
 				headcount,
 			};
 			dispatch(attendEvent(data));
-			dispatch(addMyEvent(selectedEvent?._id));
 		} else if (checked && eventAuthor === currentUser) {
 			data = {
 				_id: selectedEvent?._id,

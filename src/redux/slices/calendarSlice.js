@@ -114,7 +114,7 @@ const initialState = calendarAdapter.getInitialState({
 	savedEvents: null,
 	selectedEvent: null,
 	guestList: null,
-	myEvents: [],
+	myEvents: null,
 	success: null,
 	errors: null,
 });
@@ -166,26 +166,8 @@ export const calendarSlice = createSlice({
 		setGuestList: (state, action) => {
 			state.guestList = action.payload;
 		},
-		addMyEvent: (state, action) => {
-			const alreadyAttending = state.myEvents.find(
-				(item) => item === action.payload
-			);
-
-			if (!alreadyAttending) {
-				state.myEvents = [...state.myEvents, action.payload];
-			}
-		},
-		removeMyEvent: (state, action) => {
-			const alreadyAttending = state.myEvents.find(
-				(item) => item === action.payload
-			);
-
-			if (alreadyAttending) {
-				const updated = state.myEvents.filter(
-					(item) => item !== action.payload
-				);
-				state.myEvents = updated;
-			}
+		setMyEvents: (state, action) => {
+			state.myEvents = action.payload;
 		},
 		clearSuccess: (state) => {
 			state.success = null;
@@ -232,6 +214,7 @@ export const calendarSlice = createSlice({
 				state.savedEvents = action.payload.updatedAll;
 				state.selectedEvent = action.payload.updatedEvent;
 				state.guestList = action.payload.updatedEvent.attendees;
+				state.myEvents = action.payload.updatedMyEvents;
 				state.headcount = '';
 			})
 			.addCase(attendEvent.rejected, (state, action) => {
@@ -276,6 +259,7 @@ export const calendarSlice = createSlice({
 				state.success = action.payload.success;
 				state.savedEvents = action.payload.updatedAll;
 				state.selectedEvent = action.payload.updatedEvent;
+				state.myEvents = action.payload.updatedMyEvents;
 			})
 			.addCase(cancelRsvp.rejected, (state, action) => {
 				state.loading = false;
@@ -312,8 +296,7 @@ export const {
 	setSelectedLabel,
 	setSelectedEvent,
 	setGuestList,
-	addMyEvent,
-	removeMyEvent,
+	setMyEvents,
 	clearSuccess,
 	clearErrors,
 } = calendarSlice.actions;

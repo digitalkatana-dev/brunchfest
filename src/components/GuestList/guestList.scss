@@ -1,6 +1,11 @@
 .guest-list {
 	max-width: 35%;
 
+	header {
+		margin: 10px 0;
+		text-align: center;
+	}
+
 	.container {
 		width: inherit;
 		position: relative;

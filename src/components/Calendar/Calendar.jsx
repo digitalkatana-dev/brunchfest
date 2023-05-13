@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
 	setCurrentMonth,
 	getAllEvents,
+	setMyEvents,
 	clearSuccess,
 	clearErrors,
 } from '../../redux/slices/calendarSlice';
@@ -14,10 +15,15 @@ import EventModal from './components/EventModal';
 import './calendar.scss';
 
 const Calendar = () => {
+	const { user } = useSelector((state) => state.auth);
 	const { currentMonth, monthIndex, savedEvents, success, errors } =
 		useSelector((state) => state.calendar);
 	const [open, setOpen] = useState(false);
 	const dispatch = useDispatch();
+
+	useEffect(() => {
+		dispatch(setMyEvents(user?.myEvents));
+	}, [user]);
 
 	useEffect(() => {
 		if (!savedEvents) {
