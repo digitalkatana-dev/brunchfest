@@ -1,11 +1,11 @@
 .sidebar {
-	border: 1px solid dodgerblue;
+	// border: 1px solid dodgerblue;
 	display: flex;
 	justify-content: center;
 	padding: 2px 4px;
 	margin: 10px 0;
 
-	.small-head {
+	.small-cal {
 		display: none;
 	}
 }
@@ -21,10 +21,14 @@
 		align-items: center;
 		margin: 0 10px;
 
-		.small-head {
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
+		.small-cal {
+			display: block;
+
+			.small-head {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+			}
 		}
 	}
 }

@@ -22,6 +22,7 @@ import {
 	createEvent,
 	attendEvent,
 	setSelectedEvent,
+	deleteEvent,
 } from '../../../../redux/slices/calendarSlice';
 import { labelClasses } from '../../../../util/data';
 import dayjs from 'dayjs';
@@ -33,6 +34,7 @@ import MyLocationIcon from '@mui/icons-material/MyLocation';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import CheckIcon from '@mui/icons-material/Check';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
+import DeleteIcon from '@mui/icons-material/Delete';
 import './eventModal.scss';
 
 const EventModal = () => {
@@ -63,6 +65,8 @@ const EventModal = () => {
 
 		return data;
 	};
+	const eventAuthor = selectedEvent?.createdBy;
+	const currentUser = user?._id;
 	const dispatch = useDispatch();
 
 	const handleClose = () => {
@@ -95,6 +99,11 @@ const EventModal = () => {
 			default:
 				break;
 		}
+	};
+
+	const handleDelete = () => {
+		dispatch(deleteEvent(selectedEvent?._id));
+		dispatch(toggleOpen());
 	};
 
 	const handleSubmit = (e) => {
@@ -165,7 +174,7 @@ const EventModal = () => {
 									size='small'
 									label='Time'
 									variant='standard'
-									defaultValue={selectedEvent?.time}
+									defaultValue={selectedEvent ? selectedEvent.time : eventTime}
 									onChange={(e) => handleChange('time', e.target.value)}
 									InputProps={{
 										startAdornment: (
@@ -183,7 +192,9 @@ const EventModal = () => {
 									size='small'
 									label='Location'
 									variant='standard'
-									defaultValue={selectedEvent?.location}
+									defaultValue={
+										selectedEvent ? selectedEvent.location : eventLoc
+									}
 									onChange={(e) => handleChange('loc', e.target.value)}
 									InputProps={{
 										startAdornment: (
@@ -202,7 +213,7 @@ const EventModal = () => {
 										{labelClasses.map((item, i) => (
 											<span
 												key={i}
-												onClick={() => dispatch(handleChange('label', item))}
+												onClick={() => handleChange('label', item)}
 												style={tagStyle(item)}
 											>
 												{selectedEvent ? (
@@ -268,7 +279,17 @@ const EventModal = () => {
 				{!user && <DialogContentText>Sign in to RSVP!</DialogContentText>}
 			</DialogContent>
 			{user && (
-				<DialogActions>
+				<DialogActions
+					sx={{
+						justifyContent:
+							eventAuthor === currentUser ? 'space-between' : 'flex-end',
+					}}
+				>
+					{eventAuthor === currentUser && (
+						<IconButton onClick={handleDelete}>
+							<DeleteIcon className='delete' />
+						</IconButton>
+					)}
 					<Button onClick={handleSubmit}>Submit</Button>
 				</DialogActions>
 			)}
