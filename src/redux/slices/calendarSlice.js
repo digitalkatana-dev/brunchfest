@@ -56,6 +56,33 @@ export const attendEvent = createAsyncThunk(
 	}
 );
 
+export const cancelRsvp = createAsyncThunk(
+	'calendar/cancel_rsvp',
+	async (eventInfo, { rejectWithValue }) => {
+		try {
+			const res = await brunchApi.put('/events/remove-attendee', eventInfo);
+			return res.data;
+		} catch (err) {
+			return rejectWithValue(err.response.data);
+		}
+	}
+);
+
+export const updateEvent = createAsyncThunk(
+	'calendar/update_event',
+	async (eventInfo, { rejectWithValue }) => {
+		try {
+			const res = await brunchApi.put(
+				`/events/update/${eventInfo._id}`,
+				eventInfo
+			);
+			return res.data;
+		} catch (err) {
+			return rejectWithValue(err.response.data);
+		}
+	}
+);
+
 export const deleteEvent = createAsyncThunk(
 	'calendar/delete_event',
 	async (eventInfo, { rejectWithValue }) => {
@@ -86,6 +113,7 @@ const initialState = calendarAdapter.getInitialState({
 	selectedLabel: labelClasses[0],
 	savedEvents: null,
 	selectedEvent: null,
+	myEvents: [],
 	success: null,
 	errors: null,
 });
@@ -130,17 +158,26 @@ export const calendarSlice = createSlice({
 		setSelectedEvent: (state, action) => {
 			state.selectedEvent = action.payload;
 		},
-		addEvent: (state, action) => {
-			state.savedEvents = [...state.savedEvents, action.payload];
-		},
-		updateEvent: (state, action) => {
-			const updated = () => {
-				return state.savedEvents.map((event) =>
-					event.id === action.payload.id ? action.payload : event
-				);
-			};
+		addMyEvent: (state, action) => {
+			const alreadyAttending = state.myEvents.find(
+				(item) => item === action.payload
+			);
 
-			state.savedEvents = updated();
+			if (!alreadyAttending) {
+				state.myEvents = [...state.myEvents, action.payload];
+			}
+		},
+		removeMyEvent: (state, action) => {
+			const alreadyAttending = state.myEvents.find(
+				(item) => item === action.payload
+			);
+
+			if (alreadyAttending) {
+				const updated = state.myEvents.filter(
+					(item) => item !== action.payload
+				);
+				state.myEvents = updated;
+			}
 		},
 		clearSuccess: (state) => {
 			state.success = null;
@@ -216,6 +253,34 @@ export const calendarSlice = createSlice({
 			.addCase(getSingleEvent.rejected, (state, action) => {
 				state.loading = false;
 				state.errors = action.payload;
+			})
+			.addCase(cancelRsvp.pending, (state) => {
+				state.loading = true;
+				state.errors = null;
+			})
+			.addCase(cancelRsvp.fulfilled, (state, action) => {
+				state.loading = false;
+				state.success = action.payload.success;
+				state.savedEvents = action.payload.updatedAll;
+				state.selectedEvent = action.payload.updatedEvent;
+			})
+			.addCase(cancelRsvp.rejected, (state, action) => {
+				state.loading = false;
+				state.errors = action.payload;
+			})
+			.addCase(updateEvent.pending, (state) => {
+				state.loading = true;
+				state.errors = false;
+			})
+			.addCase(updateEvent.fulfilled, (state, action) => {
+				state.loading = false;
+				state.success = action.payload.success;
+				state.savedEvents = action.payload.updatedAll;
+				state.selectedEvent = action.payload.updatedEvent;
+			})
+			.addCase(updateEvent.rejected, (state, action) => {
+				state.loading = false;
+				state.errors = action.payload;
 			});
 	},
 });
@@ -233,8 +298,8 @@ export const {
 	setHeadcount,
 	setSelectedLabel,
 	setSelectedEvent,
-	addEvent,
-	updateEvent,
+	addMyEvent,
+	removeMyEvent,
 	clearSuccess,
 	clearErrors,
 } = calendarSlice.actions;

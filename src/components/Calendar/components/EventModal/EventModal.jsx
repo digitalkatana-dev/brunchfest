@@ -10,6 +10,7 @@ import {
 	InputAdornment,
 	Switch,
 	TextField,
+	Tooltip,
 } from '@mui/material';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -21,7 +22,10 @@ import {
 	setSelectedLabel,
 	createEvent,
 	attendEvent,
-	setSelectedEvent,
+	cancelRsvp,
+	updateEvent,
+	addMyEvent,
+	removeMyEvent,
 	deleteEvent,
 } from '../../../../redux/slices/calendarSlice';
 import { labelClasses } from '../../../../util/data';
@@ -35,6 +39,7 @@ import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import CheckIcon from '@mui/icons-material/Check';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import DeleteIcon from '@mui/icons-material/Delete';
+import UndoIcon from '@mui/icons-material/Undo';
 import './eventModal.scss';
 
 const EventModal = () => {
@@ -47,6 +52,7 @@ const EventModal = () => {
 		headcount,
 		selectedLabel,
 		selectedEvent,
+		myEvents,
 		errors,
 	} = useSelector((state) => state.calendar);
 	const [checked, setChecked] = useState(false);
@@ -69,9 +75,12 @@ const EventModal = () => {
 	const currentUser = user?._id;
 	const dispatch = useDispatch();
 
+	const alreadyAttending = myEvents?.find(
+		(item) => item === selectedEvent?._id
+	);
+
 	const handleClose = () => {
 		dispatch(toggleOpen());
-		dispatch(setSelectedEvent(null));
 	};
 
 	const handleChange = (input, value) => {
@@ -101,6 +110,14 @@ const EventModal = () => {
 		}
 	};
 
+	const handleUndo = () => {
+		const data = {
+			eventId: selectedEvent?._id,
+		};
+		dispatch(cancelRsvp(data));
+		dispatch(removeMyEvent(selectedEvent?._id));
+	};
+
 	const handleDelete = () => {
 		dispatch(deleteEvent(selectedEvent?._id));
 		dispatch(toggleOpen());
@@ -109,27 +126,31 @@ const EventModal = () => {
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		let data;
-		switch (checked) {
-			case true:
-				data = {
-					date: daySelected.format('M/DD/YYYY'),
-					time: eventTime,
-					location: eventLoc,
+		if (!checked && selectedEvent) {
+			data = {
+				eventId: selectedEvent?._id,
+				headcount,
+			};
+			dispatch(attendEvent(data));
+			dispatch(addMyEvent(selectedEvent?._id));
+		} else if (checked && eventAuthor === currentUser) {
+			data = {
+				_id: selectedEvent?._id,
+				...(eventTime && { time: eventTime }),
+				...(eventLoc && { location: eventLoc }),
+				...(selectedLabel !== selectedEvent?.label && {
 					label: selectedLabel,
-				};
-				dispatch(createEvent(data));
-				break;
-
-			case false && selectedEvent:
-				data = {
-					eventId: selectedEvent?._id,
-					headcount,
-				};
-				dispatch(attendEvent(data));
-				break;
-
-			default:
-				break;
+				}),
+			};
+			dispatch(updateEvent(data));
+		} else if (checked && !selectedEvent) {
+			data = {
+				date: daySelected.format('M/DD/YYYY'),
+				time: eventTime,
+				location: eventLoc,
+				label: selectedLabel,
+			};
+			dispatch(createEvent(data));
 		}
 		dispatch(toggleOpen());
 	};
@@ -253,24 +274,34 @@ const EventModal = () => {
 											{selectedEvent ? <>{selectedEvent.location}</> : 'TBD'}
 										</h5>
 									</div>
-									<DialogContentText>
-										Hello, {user.firstName}! How many in your party?
-									</DialogContentText>
-									<TextField
-										sx={{ marginTop: '15px' }}
-										size='small'
-										label='Headcount'
-										variant='standard'
-										value={headcount}
-										onChange={(e) => handleChange('count', e.target.value)}
-										InputProps={{
-											startAdornment: (
-												<InputAdornment position='start'>
-													<GroupAddIcon className='add-on' />
-												</InputAdornment>
-											),
-										}}
-									/>
+									{alreadyAttending ? (
+										<>
+											<DialogContentText>
+												RSVP received, you're all set!
+											</DialogContentText>
+										</>
+									) : (
+										<>
+											<DialogContentText>
+												Hello, {user.firstName}! How many in your party?
+											</DialogContentText>
+											<TextField
+												sx={{ marginTop: '15px' }}
+												size='small'
+												label='Headcount'
+												variant='standard'
+												value={headcount}
+												onChange={(e) => handleChange('count', e.target.value)}
+												InputProps={{
+													startAdornment: (
+														<InputAdornment position='start'>
+															<GroupAddIcon className='add-on' />
+														</InputAdornment>
+													),
+												}}
+											/>
+										</>
+									)}
 								</FormControl>
 							</>
 						)}
@@ -282,15 +313,29 @@ const EventModal = () => {
 				<DialogActions
 					sx={{
 						justifyContent:
-							eventAuthor === currentUser ? 'space-between' : 'flex-end',
+							eventAuthor === currentUser && checked
+								? 'space-between'
+								: 'flex-end',
 					}}
 				>
-					{eventAuthor === currentUser && (
-						<IconButton onClick={handleDelete}>
-							<DeleteIcon className='delete' />
-						</IconButton>
+					{!checked && alreadyAttending && (
+						<Tooltip title='Undo' placement='right'>
+							<IconButton onClick={handleUndo}>
+								<UndoIcon className='undo' />
+							</IconButton>
+						</Tooltip>
 					)}
-					<Button onClick={handleSubmit}>Submit</Button>
+					{!checked && !alreadyAttending && (
+						<Button onClick={handleSubmit}>Submit</Button>
+					)}
+					{checked && eventAuthor === currentUser && (
+						<Tooltip title='Delete' placement='right'>
+							<IconButton onClick={handleDelete}>
+								<DeleteIcon className='delete' />
+							</IconButton>
+						</Tooltip>
+					)}
+					{checked && <Button onClick={handleSubmit}>Submit</Button>}
 				</DialogActions>
 			)}
 		</Dialog>
