@@ -26,6 +26,7 @@ import {
 	updateEvent,
 	deleteEvent,
 	setSelectedEvent,
+	clearErrors,
 } from '../../../../redux/slices/calendarSlice';
 import { labelClasses } from '../../../../util/data';
 import dayjs from 'dayjs';
@@ -79,7 +80,7 @@ const EventModal = () => {
 	);
 
 	const handleClose = () => {
-		dispatch(toggleOpen());
+		dispatch(toggleOpen(false));
 		dispatch(setSelectedEvent(null));
 	};
 
@@ -119,7 +120,7 @@ const EventModal = () => {
 
 	const handleDelete = () => {
 		dispatch(deleteEvent(selectedEvent?._id));
-		dispatch(toggleOpen());
+		dispatch(toggleOpen(false));
 	};
 
 	const handleSubmit = (e) => {
@@ -150,10 +151,6 @@ const EventModal = () => {
 			};
 			dispatch(createEvent(data));
 		}
-		dispatch(toggleOpen());
-		setTimeout(() => {
-			dispatch(setSelectedEvent(null));
-		}, 1000);
 	};
 
 	return (
@@ -288,6 +285,7 @@ const EventModal = () => {
 												variant='standard'
 												value={headcount}
 												onChange={(e) => handleChange('count', e.target.value)}
+												onFocus={() => dispatch(clearErrors())}
 												InputProps={{
 													startAdornment: (
 														<InputAdornment position='start'>
@@ -296,6 +294,9 @@ const EventModal = () => {
 													),
 												}}
 											/>
+											{errors?.headcount && (
+												<h6 className='error'>{errors?.headcount}</h6>
+											)}
 										</>
 									)}
 								</FormControl>

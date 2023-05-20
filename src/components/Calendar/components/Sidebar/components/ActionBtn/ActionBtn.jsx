@@ -8,7 +8,7 @@ const ActionBtn = ({ label, actionType }) => {
 
 	const handleClick = () => {
 		if (daySelected) {
-			dispatch(toggleOpen());
+			dispatch(toggleOpen(true));
 		}
 	};
 

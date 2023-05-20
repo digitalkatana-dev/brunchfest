@@ -126,8 +126,8 @@ export const calendarSlice = createSlice({
 		setActionType: (state, action) => {
 			state.actionType = action.payload;
 		},
-		toggleOpen: (state) => {
-			state.open = !state.open;
+		toggleOpen: (state, action) => {
+			state.open = action.payload;
 		},
 		setCurrentMonth: (state, action) => {
 			state.currentMonth = getMonth(action.payload);
@@ -187,6 +187,7 @@ export const calendarSlice = createSlice({
 				state.savedEvents = [...state.savedEvents, action.payload];
 				state.eventTime = '';
 				state.eventLoc = '';
+				state.open = false;
 			})
 			.addCase(createEvent.rejected, (state, action) => {
 				state.loading = false;
@@ -212,9 +213,10 @@ export const calendarSlice = createSlice({
 				state.loading = false;
 				state.success = action.payload.success;
 				state.savedEvents = action.payload.updatedAll;
-				state.selectedEvent = action.payload.updatedEvent;
+				state.selectedEvent = null;
 				state.guestList = action.payload.updatedEvent.attendees;
 				state.myEvents = action.payload.updatedMyEvents;
+				state.open = false;
 				state.headcount = '';
 			})
 			.addCase(attendEvent.rejected, (state, action) => {
@@ -273,7 +275,8 @@ export const calendarSlice = createSlice({
 				state.loading = false;
 				state.success = action.payload.success;
 				state.savedEvents = action.payload.updatedAll;
-				state.selectedEvent = action.payload.updatedEvent;
+				state.selectedEvent = null;
+				state.open = false;
 			})
 			.addCase(updateEvent.rejected, (state, action) => {
 				state.loading = false;

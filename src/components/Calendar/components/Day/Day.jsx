@@ -17,7 +17,7 @@ const Day = ({ day, rowIdx }) => {
 
 	const handleClick = () => {
 		dispatch(setDaySelected(day));
-		dispatch(toggleOpen());
+		dispatch(toggleOpen(true));
 	};
 
 	const getCurrentDayClass = () => {
