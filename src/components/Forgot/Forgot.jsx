@@ -43,7 +43,7 @@ const Forgot = () => {
 			setTimeout(() => {
 				dispatch(setEmail(''));
 				dispatch(clearSuccess());
-				dispatch(setMenuOpen());
+				dispatch(setMenuOpen(false));
 				dispatch(setMenuView('auth'));
 			}, 5000);
 		}

@@ -10,8 +10,8 @@ export const navSlice = createSlice({
 	name: 'nav',
 	initialState,
 	reducers: {
-		setMenuOpen: (state) => {
-			state.menuOpen = !state.menuOpen;
+		setMenuOpen: (state, action) => {
+			state.menuOpen = action.payload;
 		},
 		setMenuView: (state, action) => {
 			state.menuView = action.payload;

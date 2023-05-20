@@ -1,6 +1,7 @@
 import { Alert, Snackbar } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { getUser } from '../../redux/slices/authSlice';
 import {
 	setCurrentMonth,
 	getAllEvents,
@@ -38,6 +39,7 @@ const Calendar = () => {
 	useEffect(() => {
 		if (success || errors?.event) {
 			setOpen(true);
+			dispatch(getUser(user._id));
 			setTimeout(() => {
 				dispatch(clearSuccess());
 				dispatch(clearErrors());

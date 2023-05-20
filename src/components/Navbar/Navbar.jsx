@@ -12,7 +12,7 @@ const Navbar = () => {
 	const dispatch = useDispatch();
 
 	const handleMenu = () => {
-		dispatch(setMenuOpen());
+		dispatch(setMenuOpen(!menuOpen));
 		setTimeout(() => {
 			dispatch(clearErrors());
 			dispatch(setMenuView('auth'));

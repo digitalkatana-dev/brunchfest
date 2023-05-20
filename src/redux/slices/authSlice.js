@@ -34,6 +34,18 @@ export const login = createAsyncThunk(
 	}
 );
 
+export const getUser = createAsyncThunk(
+	'auth/get_user',
+	async (data, { rejectWithValue }) => {
+		try {
+			const res = await brunchApi.get(`/users/${data}`);
+			return res.data;
+		} catch (err) {
+			return rejectWithValue(err.response.data);
+		}
+	}
+);
+
 export const generatePasswordToken = createAsyncThunk(
 	'auth/generate_password_token',
 	async (userData, { rejectWithValue }) => {
@@ -164,6 +176,18 @@ export const authSlice = createSlice({
 				state.errors = false;
 			})
 			.addCase(login.rejected, (state, action) => {
+				state.loading = false;
+				state.errors = action.payload;
+			})
+			.addCase(getUser.pending, (state) => {
+				state.loading = true;
+				state.errors = null;
+			})
+			.addCase(getUser.fulfilled, (state, action) => {
+				state.loading = false;
+				state.user = action.payload;
+			})
+			.addCase(getUser.rejected, (state, action) => {
 				state.loading = false;
 				state.errors = action.payload;
 			})

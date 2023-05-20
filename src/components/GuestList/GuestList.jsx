@@ -23,7 +23,17 @@ const GuestList = () => {
 				<div className='overlay'>
 					{guestList?.map((guest) => (
 						<span key={guest._id}>
-							{guest.name} + {guest.headcount - 1} guests
+							{guest.headcount - 1 >= 2 ? (
+								<>
+									{guest.name} + {guest.headcount - 1} guests
+								</>
+							) : guest.headcount - 1 > 0 ? (
+								<>
+									{guest.name} + {guest.headcount - 1} guest
+								</>
+							) : (
+								<>{guest.name}</>
+							)}
 						</span>
 					))}
 				</div>

@@ -30,6 +30,7 @@ import {
 import { labelClasses } from '../../../../util/data';
 import dayjs from 'dayjs';
 import DragHandleIcon from '@mui/icons-material/DragHandle';
+import SendToMobileIcon from '@mui/icons-material/SendToMobile';
 import CloseIcon from '@mui/icons-material/Close';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import ScheduleIcon from '@mui/icons-material/Schedule';
@@ -158,7 +159,15 @@ const EventModal = () => {
 	return (
 		<Dialog open={open} onClose={handleClose} maxWidth='xs'>
 			<DialogTitle className='title'>
-				<DragHandleIcon />
+				{selectedEvent && checked ? (
+					<Tooltip title='Send Reminders' placement='top'>
+						<IconButton>
+							<SendToMobileIcon className='send-reminder' />
+						</IconButton>
+					</Tooltip>
+				) : (
+					<DragHandleIcon />
+				)}
 				{user?.isAdmin && (
 					<div className='content-switch'>
 						<h6>RSVP</h6>

@@ -13,7 +13,7 @@ const Menu = () => {
 
 	useEffect(() => {
 		if (user) {
-			dispatch(setMenuOpen());
+			dispatch(setMenuOpen(false));
 		}
 	}, [user]);
 

@@ -8,7 +8,7 @@ const UpNext = () => {
 				Up Next:{' '}
 				<TypeAnimation
 					cursor={true}
-					sequence={['May 28, 2023', 2000, 'Hamburger Maries', 2000]}
+					sequence={['May 28, 2023', 2000, 'Farmer & Seahorse', 2000]}
 					wrapper='span'
 					repeat={Infinity}
 				/>
