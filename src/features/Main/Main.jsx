@@ -3,6 +3,8 @@ import Hero from './components/Hero';
 import Welcome from './components/Welcome';
 import UpNext from './components/UpNext';
 import RSVP from './components/RSVP';
+import Memories from './components/Memories';
+import Footer from './components/Footer';
 
 const Main = () => {
 	return (
@@ -11,6 +13,8 @@ const Main = () => {
 			<Welcome />
 			<UpNext />
 			<RSVP />
+			<Memories />
+			<Footer />
 		</div>
 	);
 };

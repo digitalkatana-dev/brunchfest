@@ -3,6 +3,10 @@
 	padding: 0;
 	scroll-snap-align: start;
 	box-sizing: border-box;
+	scrollbar-width: none;
+	&::-webkit-scrollbar {
+		display: none;
+	}
 }
 
 body {
@@ -12,10 +16,6 @@ body {
 	-moz-osx-font-smoothing: grayscale;
 	scroll-behavior: smooth;
 	scroll-snap-type: y mandatory;
-	scrollbar-width: none;
-	&::-webkit-scrollbar {
-		display: none;
-	}
 }
 
 // font-family: 'Bubblegum Sans', cursive;

@@ -35,4 +35,14 @@ p {
 	.selected-day {
 		background-color: indigo;
 	}
+
+	.day-event {
+		width: inherit;
+		border-radius: 30px;
+		font-size: xx-small;
+		color: whitesmoke;
+		margin-bottom: 2px;
+		padding: 2px;
+		z-index: 5;
+	}
 }

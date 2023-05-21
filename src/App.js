@@ -9,6 +9,8 @@ import {
 import Navbar from './components/Navbar';
 import Menu from './components/Menu';
 import Main from './features/Main';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 import './App.scss';
 
 function App() {

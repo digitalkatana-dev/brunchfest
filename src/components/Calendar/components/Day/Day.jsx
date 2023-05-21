@@ -47,13 +47,8 @@ const Day = ({ day, rowIdx }) => {
 						onClick={() => dispatch(setSelectedEvent(item))}
 						style={{
 							backgroundColor: `${item.label}`,
-							width: 'inherit',
-							borderRadius: '30px',
-							fontSize: 'xx-small',
-							color: 'whitesmoke',
-							marginBottom: 2,
-							zIndex: 5,
 						}}
+						className='day-event'
 					>
 						{item.location}
 					</div>
