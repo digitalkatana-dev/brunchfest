@@ -24,7 +24,7 @@ const Memories = () => {
 	}, [savedEvents]);
 
 	return (
-		<div className='memories'>
+		<div className={!memories ? 'memories' : 'no-memories'}>
 			{!memories ? (
 				<Carousel />
 			) : (
