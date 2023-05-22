@@ -15,7 +15,7 @@
 	transition: all 1s ease;
 
 	&.active {
-		top: 60px;
+		top: 55px;
 	}
 
 	.title-icon.green {
@@ -37,4 +37,20 @@
 	h6.link {
 		cursor: pointer;
 	}
+}
+
+@media only screen and (min-width: 500px) {
+}
+@media only screen and (min-width: 600px) {
+	.MuiPaper-root.menu {
+		&.active {
+			top: 63px;
+		}
+	}
+}
+@media only screen and (min-width: 900px) {
+}
+@media only screen and (min-width: 1200px) {
+}
+@media only screen and (min-width: 1536px) {
 }

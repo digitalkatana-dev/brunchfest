@@ -4,12 +4,13 @@ video {
 }
 
 .hero {
+	width: 100vw;
+	height: calc(100vh / 3);
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	position: relative;
-	width: 100vw;
-	height: calc(100vh / 3);
+	margin-top: 55px;
 	overflow: hidden;
 	background: #ff5f6d; /* fallback for old browsers */
 	background: -webkit-linear-gradient(
@@ -49,6 +50,9 @@ video {
 @media only screen and (min-width: 500px) {
 }
 @media only screen and (min-width: 600px) {
+	.hero {
+		margin-top: 63px;
+	}
 }
 @media only screen and (min-width: 900px) {
 	.hero {
