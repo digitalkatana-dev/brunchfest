@@ -1,0 +1,48 @@
+p {
+	font-size: x-small;
+	font-family: 'Open Sans', sans-serif;
+}
+
+.cell {
+	height: 54px;
+	width: 54px;
+
+	header {
+		margin-top: 5px;
+		margin-left: 5px;
+	}
+
+	.abv {
+		margin-bottom: 1px;
+	}
+
+	.today,
+	.selected-day {
+		width: 16px;
+		height: 16px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		color: whitesmoke;
+		border-radius: 100%;
+		padding: 5px;
+	}
+
+	.today {
+		background-color: steelblue;
+	}
+
+	.selected-day {
+		background-color: indigo;
+	}
+
+	.day-event {
+		width: inherit;
+		border-radius: 30px;
+		font-size: xx-small;
+		color: whitesmoke;
+		margin-bottom: 2px;
+		padding: 2px;
+		z-index: 5;
+	}
+}

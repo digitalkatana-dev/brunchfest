@@ -1,0 +1,89 @@
+.guest-list {
+	max-width: 35%;
+
+	header {
+		margin: 10px 0;
+		text-align: center;
+	}
+
+	.container {
+		width: inherit;
+		position: relative;
+
+		img {
+			width: 100%;
+			max-height: 422px;
+		}
+
+		.overlay {
+			position: absolute;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			padding-top: 20px;
+			padding-bottom: 20px;
+			padding-left: 15px;
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+			// background: rgb(0, 0, 0);
+			// background: rgba(0, 0, 0, 0.5);
+			flex-wrap: wrap;
+			overflow-y: scroll;
+
+			span {
+				font-size: xx-small;
+			}
+		}
+	}
+}
+@media only screen and (min-width: 500px) {
+	.guest-list {
+		.container {
+			.overlay {
+				padding-left: 25px;
+
+				span {
+					font-size: x-small;
+				}
+			}
+		}
+	}
+}
+@media only screen and (min-width: 600px) {
+	.guest-list {
+		.container {
+			.overlay {
+				span {
+					font-size: small;
+				}
+			}
+		}
+	}
+}
+@media only screen and (min-width: 700px) {
+	.guest-list {
+		.container {
+			.overlay {
+				span {
+					font-size: medium;
+				}
+			}
+		}
+	}
+}
+@media only screen and (min-width: 800px) {
+	.guest-list {
+		.container {
+			.overlay {
+				padding-left: 35px;
+			}
+		}
+	}
+}
+@media only screen and (min-width: 900px) {
+}
+@media only screen and (min-width: 1200px) {
+}
+@media only screen and (min-width: 1536px) {
+}

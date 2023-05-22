@@ -34,6 +34,18 @@ export const login = createAsyncThunk(
 	}
 );
 
+export const getUser = createAsyncThunk(
+	'auth/get_user',
+	async (data, { rejectWithValue }) => {
+		try {
+			const res = await brunchApi.get(`/users/${data}`);
+			return res.data;
+		} catch (err) {
+			return rejectWithValue(err.response.data);
+		}
+	}
+);
+
 export const generatePasswordToken = createAsyncThunk(
 	'auth/generate_password_token',
 	async (userData, { rejectWithValue }) => {
@@ -65,12 +77,13 @@ export const authAdapter = createEntityAdapter();
 const initialState = authAdapter.getInitialState({
 	loading: false,
 	authType: 'Login',
-	name: '',
+	firstName: '',
+	lastName: '',
+	phone: '',
 	email: '',
 	password: '',
 	show: false,
 	user: null,
-	// user: { name: 'Big John' },
 	success: null,
 	errors: null,
 });
@@ -82,8 +95,14 @@ export const authSlice = createSlice({
 		setAuthType: (state, action) => {
 			state.authType = action.payload;
 		},
-		setName: (state, action) => {
-			state.name = action.payload;
+		setFirstName: (state, action) => {
+			state.firstName = action.payload;
+		},
+		setLastName: (state, action) => {
+			state.lastName = action.payload;
+		},
+		setPhone: (state, action) => {
+			state.phone = action.payload;
 		},
 		setEmail: (state, action) => {
 			state.email = action.payload;
@@ -97,6 +116,13 @@ export const authSlice = createSlice({
 		setErrors: (state, action) => {
 			state.errors = action.payload;
 		},
+		clearForm: (state) => {
+			state.firstName = '';
+			state.lastName = '';
+			state.phone = '';
+			state.email = '';
+			state.password = '';
+		},
 		clearSuccess: (state) => {
 			state.success = null;
 		},
@@ -106,7 +132,9 @@ export const authSlice = createSlice({
 		logout: (state) => {
 			state.loading = false;
 			state.authType = 'Login';
-			state.name = '';
+			state.firstName = '';
+			state.lastName = '';
+			state.phone = '';
 			state.email = '';
 			state.password = '';
 			state.user = null;
@@ -124,7 +152,9 @@ export const authSlice = createSlice({
 			})
 			.addCase(register.fulfilled, (state, action) => {
 				state.loading = false;
-				state.name = '';
+				state.firstName = '';
+				state.lastName = '';
+				state.phone = '';
 				state.email = '';
 				state.password = '';
 				state.user = action.payload;
@@ -146,6 +176,18 @@ export const authSlice = createSlice({
 				state.errors = false;
 			})
 			.addCase(login.rejected, (state, action) => {
+				state.loading = false;
+				state.errors = action.payload;
+			})
+			.addCase(getUser.pending, (state) => {
+				state.loading = true;
+				state.errors = null;
+			})
+			.addCase(getUser.fulfilled, (state, action) => {
+				state.loading = false;
+				state.user = action.payload;
+			})
+			.addCase(getUser.rejected, (state, action) => {
 				state.loading = false;
 				state.errors = action.payload;
 			})
@@ -184,13 +226,16 @@ export const authSlice = createSlice({
 
 export const {
 	setAuthType,
-	setName,
+	setFirstName,
+	setLastName,
+	setPhone,
 	setEmail,
 	setPassword,
 	setShow,
 	setErrors,
-	clearErrors,
+	clearForm,
 	clearSuccess,
+	clearErrors,
 	logout,
 } = authSlice.actions;
 

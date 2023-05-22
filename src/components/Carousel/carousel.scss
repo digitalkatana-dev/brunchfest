@@ -1,0 +1,15 @@
+.slide {
+	max-width: 90%;
+	align-self: center;
+	border: 2px solid magenta;
+
+	.slick-arrow::before {
+		color: black !important;
+	}
+
+	.pic {
+		height: 180px;
+		background-color: black;
+		color: whitesmoke;
+	}
+}
