@@ -9,16 +9,13 @@ const Carousel = ({ pics }) => {
 		slidesToScroll: 1,
 	};
 	return (
-		<>
-			<h3>Event</h3>
-			<Slider {...settings} className='slide' autoplay>
-				{[1, 2, 3, 4, 5, 6].map((item, i) => (
-					<div className='pic' key={i}>
-						<h3>{item}</h3>
-					</div>
-				))}
-			</Slider>
-		</>
+		<Slider {...settings} className='slide' autoplay>
+			{[1, 2, 3, 4, 5, 6].map((item, i) => (
+				<div className='pic' key={i}>
+					<h3>{item}</h3>
+				</div>
+			))}
+		</Slider>
 	);
 };
 

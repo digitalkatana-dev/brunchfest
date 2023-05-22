@@ -24,12 +24,15 @@ const Memories = () => {
 	}, [savedEvents]);
 
 	return (
-		<div className={!memories ? 'memories' : 'no-memories'}>
-			{!memories ? (
-				<Carousel />
-			) : (
-				<h2>No memories yet, would you like to share?</h2>
-			)}
+		<div className='memories'>
+			<h3>Memories</h3>
+			<div className={memories ? 'memory-container' : 'memory-container empty'}>
+				{memories ? (
+					<Carousel />
+				) : (
+					<h2>No memories yet, would you like to share?</h2>
+				)}
+			</div>
 		</div>
 	);
 };
