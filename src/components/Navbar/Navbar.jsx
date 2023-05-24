@@ -1,10 +1,18 @@
-import { AppBar, Toolbar, Button, useScrollTrigger } from '@mui/material';
+import {
+	AppBar,
+	Button,
+	IconButton,
+	Toolbar,
+	Tooltip,
+	useScrollTrigger,
+} from '@mui/material';
 import { cloneElement } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearErrors } from '../../redux/slices/authSlice';
 import { setMenuOpen, setMenuView } from '../../redux/slices/navSlice';
 import { logout } from '../../redux/slices/authSlice';
 import { persistor } from '../../redux/rootStore';
+import SettingsIcon from '@mui/icons-material/Settings';
 import './navbar.scss';
 
 const Navbar = (props) => {
@@ -41,7 +49,18 @@ const Navbar = (props) => {
 		<ElevationScroll {...props}>
 			<AppBar>
 				<Toolbar className={menuOpen ? 'navbar active' : 'navbar'}>
-					{user ? <h4>Hello, {user.firstName}!</h4> : <div></div>}
+					{user ? (
+						<div className='user-area'>
+							<h3>Hello, {user.firstName}!</h3>
+							<Tooltip title='Settings' placement='right'>
+								<IconButton>
+									<SettingsIcon className='settings-icon' />
+								</IconButton>
+							</Tooltip>
+						</div>
+					) : (
+						<div></div>
+					)}
 					{user ? (
 						<Button color='inherit' onClick={handleLogout}>
 							Logout

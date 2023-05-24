@@ -6,8 +6,18 @@
 	z-index: 4;
 	transition: all 1s ease;
 
-	h4 {
+	h3 {
 		font-weight: 500;
+	}
+
+	.user-area {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+
+		.settings-icon {
+			color: slategray;
+		}
 	}
 
 	.hamburger {
