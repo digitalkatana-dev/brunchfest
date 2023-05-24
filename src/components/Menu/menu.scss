@@ -1,6 +1,6 @@
 .MuiPaper-root.menu {
 	width: 320px;
-	max-height: 450px;
+	max-height: 580px;
 	position: fixed;
 	top: -450px;
 	right: 10px;
@@ -24,6 +24,14 @@
 
 	.title-icon.blue {
 		color: steelblue;
+	}
+
+	.notify {
+		margin-top: 10px;
+
+		.notify-label {
+			color: whitesmoke;
+		}
 	}
 
 	#forgot-form {

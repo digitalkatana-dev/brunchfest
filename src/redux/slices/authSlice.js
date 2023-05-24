@@ -82,6 +82,7 @@ const initialState = authAdapter.getInitialState({
 	phone: '',
 	email: '',
 	password: '',
+	notify: 'sms',
 	show: false,
 	user: null,
 	success: null,
@@ -110,6 +111,9 @@ export const authSlice = createSlice({
 		setPassword: (state, action) => {
 			state.password = action.payload;
 		},
+		setNotify: (state, action) => {
+			state.notify = action.payload;
+		},
 		setShow: (state) => {
 			state.show = !state.show;
 		},
@@ -122,6 +126,7 @@ export const authSlice = createSlice({
 			state.phone = '';
 			state.email = '';
 			state.password = '';
+			state.notify = 'sms';
 		},
 		clearSuccess: (state) => {
 			state.success = null;
@@ -137,6 +142,7 @@ export const authSlice = createSlice({
 			state.phone = '';
 			state.email = '';
 			state.password = '';
+			state.notify = 'sms';
 			state.user = null;
 			state.success = null;
 			state.errors = null;
@@ -157,6 +163,7 @@ export const authSlice = createSlice({
 				state.phone = '';
 				state.email = '';
 				state.password = '';
+				state.notify = 'sms';
 				state.user = action.payload;
 				state.errors = false;
 			})
@@ -231,6 +238,7 @@ export const {
 	setPhone,
 	setEmail,
 	setPassword,
+	setNotify,
 	setShow,
 	setErrors,
 	clearForm,
