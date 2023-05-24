@@ -83,6 +83,18 @@ export const updateEvent = createAsyncThunk(
 	}
 );
 
+export const sendReminders = createAsyncThunk(
+	'calendar/send_reminders',
+	async (eventInfo, { rejectWithValue }) => {
+		try {
+			const res = await brunchApi.post('/events/reminders', eventInfo);
+			return res.data;
+		} catch (err) {
+			return rejectWithValue(err.response.data);
+		}
+	}
+);
+
 export const deleteEvent = createAsyncThunk(
 	'calendar/delete_event',
 	async (eventInfo, { rejectWithValue }) => {
@@ -205,6 +217,18 @@ export const calendarSlice = createSlice({
 				state.loading = false;
 				state.errors = action.payload;
 			})
+			.addCase(getSingleEvent.pending, (state) => {
+				state.loading = true;
+				state.errors = null;
+			})
+			.addCase(getSingleEvent.fulfilled, (state, action) => {
+				state.loading = false;
+				state.selectedEvent = action.payload;
+			})
+			.addCase(getSingleEvent.rejected, (state, action) => {
+				state.loading = false;
+				state.errors = action.payload;
+			})
 			.addCase(attendEvent.pending, (state) => {
 				state.loading = true;
 				state.errors = null;
@@ -220,35 +244,6 @@ export const calendarSlice = createSlice({
 				state.headcount = '';
 			})
 			.addCase(attendEvent.rejected, (state, action) => {
-				state.loading = false;
-				state.errors = action.payload;
-			})
-			.addCase(deleteEvent.pending, (state) => {
-				state.loading = true;
-				state.errors = null;
-			})
-			.addCase(deleteEvent.fulfilled, (state, action) => {
-				state.loading = false;
-				state.success = action.payload.deleted;
-				state.savedEvents = action.payload.updated;
-				state.selectedEvent = null;
-				state.eventTime = '';
-				state.eventLoc = '';
-				state.selectedLabel = labelClasses[0];
-			})
-			.addCase(deleteEvent.rejected, (state, action) => {
-				state.loading = false;
-				state.errors = action.payload;
-			})
-			.addCase(getSingleEvent.pending, (state) => {
-				state.loading = true;
-				state.errors = null;
-			})
-			.addCase(getSingleEvent.fulfilled, (state, action) => {
-				state.loading = false;
-				state.selectedEvent = action.payload;
-			})
-			.addCase(getSingleEvent.rejected, (state, action) => {
 				state.loading = false;
 				state.errors = action.payload;
 			})
@@ -279,6 +274,35 @@ export const calendarSlice = createSlice({
 				state.open = false;
 			})
 			.addCase(updateEvent.rejected, (state, action) => {
+				state.loading = false;
+				state.errors = action.payload;
+			})
+			.addCase(sendReminders.pending, (state) => {
+				state.loading = true;
+				state.errors = null;
+			})
+			.addCase(sendReminders.fulfilled, (state, action) => {
+				state.loading = false;
+				state.success = action.payload;
+			})
+			.addCase(sendReminders.rejected, (state, action) => {
+				state.loading = false;
+				state.errors = action.payload;
+			})
+			.addCase(deleteEvent.pending, (state) => {
+				state.loading = true;
+				state.errors = null;
+			})
+			.addCase(deleteEvent.fulfilled, (state, action) => {
+				state.loading = false;
+				state.success = action.payload.deleted;
+				state.savedEvents = action.payload.updated;
+				state.selectedEvent = null;
+				state.eventTime = '';
+				state.eventLoc = '';
+				state.selectedLabel = labelClasses[0];
+			})
+			.addCase(deleteEvent.rejected, (state, action) => {
 				state.loading = false;
 				state.errors = action.payload;
 			});

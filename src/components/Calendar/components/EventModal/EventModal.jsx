@@ -24,6 +24,7 @@ import {
 	attendEvent,
 	cancelRsvp,
 	updateEvent,
+	sendReminders,
 	deleteEvent,
 	setSelectedEvent,
 	clearErrors,
@@ -118,6 +119,13 @@ const EventModal = () => {
 		dispatch(cancelRsvp(data));
 	};
 
+	const handleReminders = () => {
+		const data = {
+			eventId: selectedEvent?._id,
+		};
+		dispatch(sendReminders(data));
+	};
+
 	const handleDelete = () => {
 		dispatch(deleteEvent(selectedEvent?._id));
 		dispatch(toggleOpen(false));
@@ -158,7 +166,7 @@ const EventModal = () => {
 			<DialogTitle className='title'>
 				{selectedEvent && checked ? (
 					<Tooltip title='Send Reminders' placement='top'>
-						<IconButton>
+						<IconButton onClick={handleReminders}>
 							<SendToMobileIcon className='send-reminder' />
 						</IconButton>
 					</Tooltip>
