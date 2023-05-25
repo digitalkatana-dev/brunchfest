@@ -5,6 +5,7 @@ import {
 	setMonthIndex,
 	setDaySelected,
 } from '../../../../../../../../redux/slices/calendarSlice';
+import { thirdSunday } from '../../../../../../../../util/helpers';
 import dayjs from 'dayjs';
 import TouchableOpacity from '../../../../../../../TouchableOpacity';
 
@@ -45,15 +46,29 @@ const SmallCalMonth = () => {
 			{currentMonthSmall.map((row, i) => (
 				<Fragment key={i}>
 					<Grid container columns={7}>
-						{row.map((day, idx) => (
-							<Grid item xs={1} key={idx} className='cell'>
-								<TouchableOpacity onClick={() => handleClick(day)}>
-									<span className={`${getDayClass(day)}`}>
-										{day.format('D')}
-									</span>
-								</TouchableOpacity>
-							</Grid>
-						))}
+						{row.map((day, idx) => {
+							const check = dayjs(thirdSunday(day.$y, day.$M + 1)).format(
+								'MM-DD-YYYY'
+							);
+							const currentDay = dayjs(day).format('MM-DD-YYYY');
+							if (check === currentDay) {
+								return (
+									<Grid item xs={1} key={idx} className='cell'>
+										<TouchableOpacity onClick={() => handleClick(day)}>
+											<span className='selected-day'>{day.format('D')}</span>
+										</TouchableOpacity>
+									</Grid>
+								);
+							} else {
+								return (
+									<Grid item xs={1} key={idx} className='cell'>
+										<span className={`${getDayClass(day)}`}>
+											{day.format('D')}
+										</span>
+									</Grid>
+								);
+							}
+						})}
 					</Grid>
 				</Fragment>
 			))}

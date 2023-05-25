@@ -12,3 +12,10 @@ export const getMonth = (month = dayjs().month()) => {
 	});
 	return daysMatrix;
 };
+
+export const thirdSunday = (year, month) => {
+	const date = new Date(year, month, 1, 12);
+	let weekday = date.getDay();
+	let dayDiff = weekday === 0 ? 14 : weekday + 7;
+	return date.setDate(date.getDate() - dayDiff);
+};
