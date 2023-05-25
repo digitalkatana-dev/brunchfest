@@ -3,6 +3,12 @@ p {
 	font-family: 'Open Sans', sans-serif;
 }
 
+.unavailable {
+	border: 1px solid lightgrey;
+	z-index: 1;
+	cursor: not-allowed;
+}
+
 .cell {
 	height: 54px;
 	width: 54px;
@@ -33,7 +39,7 @@ p {
 	}
 
 	.selected-day {
-		background-color: indigo;
+		background-color: rgba(128, 0, 128, 0.5);
 	}
 
 	.day-event {

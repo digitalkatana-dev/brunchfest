@@ -6,6 +6,7 @@ import {
 	toggleOpen,
 	setSelectedEvent,
 } from '../../../../redux/slices/calendarSlice';
+import { thirdSunday } from '../../../../util/helpers';
 import dayjs from 'dayjs';
 import TouchableOpacity from '../../../TouchableOpacity';
 import './day.scss';
@@ -14,6 +15,8 @@ const Day = ({ day, rowIdx }) => {
 	const { savedEvents } = useSelector((state) => state.calendar);
 	const [dayEvents, setDayEvents] = useState([]);
 	const dispatch = useDispatch();
+	const check = dayjs(thirdSunday(day.$y, day.$M + 1)).format('MM-DD-YYYY');
+	const currentDay = dayjs(day).format('MM-DD-YYYY');
 
 	const handleClick = () => {
 		dispatch(setDaySelected(day));
@@ -32,29 +35,41 @@ const Day = ({ day, rowIdx }) => {
 	}, [savedEvents, day]);
 
 	return (
-		<TouchableOpacity
-			onClick={handleClick}
-			inlineStyle={{ border: '1px solid lightgrey', zIndex: 1 }}
-		>
-			<Grid item xs={1} className='cell'>
-				<header>
-					{rowIdx === 0 && <p className='abv'>{day.format('ddd')}</p>}
-					<p className={`${getCurrentDayClass()}`}>{day.format('D')}</p>
-				</header>
-				{dayEvents?.map((item) => (
-					<div
-						key={item._id}
-						onClick={() => dispatch(setSelectedEvent(item))}
-						style={{
-							backgroundColor: `${item.label}`,
-						}}
-						className='day-event'
-					>
-						{item.location}
-					</div>
-				))}
-			</Grid>
-		</TouchableOpacity>
+		<>
+			{check === currentDay ? (
+				<TouchableOpacity
+					onClick={handleClick}
+					inlineStyle={{ border: '1px solid lightgrey', zIndex: 1 }}
+				>
+					<Grid item xs={1} className='cell'>
+						<header>
+							<p className={`${getCurrentDayClass()}`}>{day.format('D')}</p>
+						</header>
+						{dayEvents?.map((item) => (
+							<div
+								key={item._id}
+								onClick={() => dispatch(setSelectedEvent(item))}
+								style={{
+									backgroundColor: `${item.label}`,
+								}}
+								className='day-event'
+							>
+								{item.location}
+							</div>
+						))}
+					</Grid>
+				</TouchableOpacity>
+			) : (
+				<div className='unavailable'>
+					<Grid item xs={1} className='cell'>
+						<header>
+							{rowIdx === 0 && <p className='abv'>{day.format('ddd')}</p>}
+							<p className={`${getCurrentDayClass()}`}>{day.format('D')}</p>
+						</header>
+					</Grid>
+				</div>
+			)}
+		</>
 	);
 };
 
