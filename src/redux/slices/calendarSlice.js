@@ -126,7 +126,7 @@ const initialState = calendarAdapter.getInitialState({
 	savedEvents: null,
 	selectedEvent: null,
 	guestList: null,
-	myEvents: null,
+	eventsAttending: null,
 	success: null,
 	errors: null,
 });
@@ -178,8 +178,8 @@ export const calendarSlice = createSlice({
 		setGuestList: (state, action) => {
 			state.guestList = action.payload;
 		},
-		setMyEvents: (state, action) => {
-			state.myEvents = action.payload;
+		setEventsAttending: (state, action) => {
+			state.eventsAttending = action.payload;
 		},
 		clearSuccess: (state) => {
 			state.success = null;
@@ -239,7 +239,7 @@ export const calendarSlice = createSlice({
 				state.savedEvents = action.payload.updatedAll;
 				state.selectedEvent = null;
 				state.guestList = action.payload.updatedEvent.attendees;
-				state.myEvents = action.payload.updatedMyEvents;
+				state.eventsAttending = action.payload.updatedEventsAttending;
 				state.open = false;
 				state.headcount = '';
 			})
@@ -256,7 +256,7 @@ export const calendarSlice = createSlice({
 				state.success = action.payload.success;
 				state.savedEvents = action.payload.updatedAll;
 				state.selectedEvent = action.payload.updatedEvent;
-				state.myEvents = action.payload.updatedMyEvents;
+				state.eventsAttending = action.payload.updatedEventsAttending;
 			})
 			.addCase(cancelRsvp.rejected, (state, action) => {
 				state.loading = false;
@@ -323,7 +323,7 @@ export const {
 	setSelectedLabel,
 	setSelectedEvent,
 	setGuestList,
-	setMyEvents,
+	setEventsAttending,
 	clearSuccess,
 	clearErrors,
 } = calendarSlice.actions;

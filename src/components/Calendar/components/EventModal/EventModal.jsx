@@ -54,7 +54,7 @@ const EventModal = () => {
 		headcount,
 		selectedLabel,
 		selectedEvent,
-		myEvents,
+		eventsAttending,
 		errors,
 	} = useSelector((state) => state.calendar);
 	const [checked, setChecked] = useState(false);
@@ -76,7 +76,7 @@ const EventModal = () => {
 	const currentUser = user?._id;
 	const dispatch = useDispatch();
 
-	const alreadyAttending = myEvents?.find(
+	const alreadyAttending = eventsAttending?.find(
 		(item) => item === selectedEvent?._id
 	);
 
