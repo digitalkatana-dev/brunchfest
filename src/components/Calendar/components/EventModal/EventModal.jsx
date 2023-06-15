@@ -147,7 +147,7 @@ const EventModal = () => {
 		if (!selectedEvent) {
 			data = {
 				date: daySelected.format('M/DD/YYYY'),
-				eventType: eventType === 'other' ? eventTypeInput : eventType,
+				type: eventType === 'other' ? eventTypeInput : eventType,
 				time: eventTime,
 				location: eventLoc,
 				label: selectedLabel,
@@ -381,9 +381,7 @@ const EventModal = () => {
 						</Tooltip>
 					)}
 					{selectedEvent && !alreadyAttending && (
-						<Button disabled={!headcount} onClick={handleSubmit}>
-							Submit
-						</Button>
+						<Button onClick={handleSubmit}>Submit</Button>
 					)}
 					{selectedEvent && eventAuthor === currentUser && (
 						<Tooltip title='Delete' placement='right'>
