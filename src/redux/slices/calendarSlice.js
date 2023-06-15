@@ -4,7 +4,7 @@ import {
 	createSlice,
 } from '@reduxjs/toolkit';
 import { getMonth } from '../../util/helpers';
-import { labelClasses } from '../../util/data';
+import { labelClasses, typeOptions } from '../../util/data';
 import dayjs from 'dayjs';
 import brunchApi from '../../api/brunchApi';
 
@@ -119,6 +119,8 @@ const initialState = calendarAdapter.getInitialState({
 	currentMonthSmall: getMonth(),
 	monthIndexSmall: dayjs().month(),
 	daySelected: null,
+	eventType: '',
+	eventTypeInput: '',
 	eventTime: '',
 	eventLoc: '',
 	selectedLabel: labelClasses[0],
@@ -156,6 +158,12 @@ export const calendarSlice = createSlice({
 		setDaySelected: (state, action) => {
 			state.daySelected = action.payload;
 		},
+		setEventType: (state, action) => {
+			state.eventType = action.payload;
+		},
+		setEventTypeInput: (state, action) => {
+			state.eventTypeInput = action.payload;
+		},
 		setEventTime: (state, action) => {
 			state.eventTime = action.payload;
 		},
@@ -170,10 +178,22 @@ export const calendarSlice = createSlice({
 		},
 		setSelectedEvent: (state, action) => {
 			state.selectedEvent = action.payload;
-			state.eventTime = action.payload === null ? '' : action.payload.time;
-			state.eventLoc = action.payload === null ? '' : action.payload.location;
-			state.selectedLabel =
-				action.payload === null ? labelClasses[0] : action.payload.label;
+			if (action.payload === null) {
+				state.eventType = '';
+				state.eventTypeInput = '';
+				state.eventTime = '';
+				state.eventLoc = '';
+				state.selectedLabel = labelClasses[0];
+			} else {
+				const optionMatch = typeOptions.find(
+					(item) => item === action.payload.eventType
+				);
+				state.eventType = optionMatch ? action.payload.eventType : 'other';
+				state.eventTypeInput = !optionMatch ? action.payload.eventType : '';
+				state.eventTime = action.payload.time;
+				state.eventLoc = action.payload.location;
+				state.selectedLabel = action.payload.label;
+			}
 		},
 		setGuestList: (state, action) => {
 			state.guestList = action.payload;
@@ -197,6 +217,8 @@ export const calendarSlice = createSlice({
 			.addCase(createEvent.fulfilled, (state, action) => {
 				state.loading = false;
 				state.savedEvents = [...state.savedEvents, action.payload];
+				state.eventType = '';
+				state.eventTypeInput = '';
 				state.eventTime = '';
 				state.eventLoc = '';
 				state.open = false;
@@ -317,6 +339,8 @@ export const {
 	setCurrentMonthSmall,
 	setMonthIndexSmall,
 	setDaySelected,
+	setEventType,
+	setEventTypeInput,
 	setEventTime,
 	setEventLoc,
 	setHeadcount,

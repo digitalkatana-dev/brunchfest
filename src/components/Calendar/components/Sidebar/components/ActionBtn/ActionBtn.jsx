@@ -7,15 +7,15 @@ const ActionBtn = ({ label, actionType }) => {
 	const dispatch = useDispatch();
 
 	const handleClick = () => {
-		if (daySelected && selectedEvent) {
-			dispatch(toggleOpen(true));
-		} else if (daySelected) {
-			window.location = '/create';
-		}
+		dispatch(toggleOpen(true));
 	};
 
 	return (
-		<button className='action-btn' onClick={handleClick}>
+		<button
+			disabled={!daySelected}
+			className='action-btn'
+			onClick={handleClick}
+		>
 			<img src='plus.svg' alt='' className='action-btn-icon' />
 			<span>{selectedEvent ? label : 'Create'}</span>
 		</button>
