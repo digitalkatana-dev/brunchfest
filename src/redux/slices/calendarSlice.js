@@ -186,10 +186,10 @@ export const calendarSlice = createSlice({
 				state.selectedLabel = labelClasses[0];
 			} else {
 				const optionMatch = typeOptions.find(
-					(item) => item === action.payload.eventType
+					(item) => item === action.payload.type
 				);
-				state.eventType = optionMatch ? action.payload.eventType : 'other';
-				state.eventTypeInput = !optionMatch ? action.payload.eventType : '';
+				state.eventType = optionMatch ? action.payload.type : 'other';
+				state.eventTypeInput = !optionMatch ? action.payload.type : '';
 				state.eventTime = action.payload.time;
 				state.eventLoc = action.payload.location;
 				state.selectedLabel = action.payload.label;
