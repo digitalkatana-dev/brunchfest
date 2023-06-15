@@ -8,14 +8,17 @@ import {
 	FormControl,
 	IconButton,
 	InputAdornment,
-	Switch,
+	InputLabel,
+	MenuItem,
+	Select,
 	TextField,
 	Tooltip,
 } from '@mui/material';
-import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
 	toggleOpen,
+	setEventType,
+	setEventTypeInput,
 	setEventTime,
 	setEventLoc,
 	setHeadcount,
@@ -34,6 +37,7 @@ import dayjs from 'dayjs';
 import DragHandleIcon from '@mui/icons-material/DragHandle';
 import SendToMobileIcon from '@mui/icons-material/SendToMobile';
 import CloseIcon from '@mui/icons-material/Close';
+import DetailsIcon from '@mui/icons-material/Details';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import ScheduleIcon from '@mui/icons-material/Schedule';
 import MyLocationIcon from '@mui/icons-material/MyLocation';
@@ -42,6 +46,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import DeleteIcon from '@mui/icons-material/Delete';
 import UndoIcon from '@mui/icons-material/Undo';
+import LocalActivityIcon from '@mui/icons-material/LocalActivity';
 import './eventModal.scss';
 
 const EventModal = () => {
@@ -49,15 +54,16 @@ const EventModal = () => {
 	const {
 		open,
 		daySelected,
+		eventType,
+		eventTypeInput,
 		eventTime,
 		eventLoc,
 		headcount,
 		selectedLabel,
 		selectedEvent,
-		myEvents,
+		eventsAttending,
 		errors,
 	} = useSelector((state) => state.calendar);
-	const [checked, setChecked] = useState(false);
 	const tagStyle = (item) => {
 		const data = {
 			width: 20,
@@ -76,7 +82,7 @@ const EventModal = () => {
 	const currentUser = user?._id;
 	const dispatch = useDispatch();
 
-	const alreadyAttending = myEvents?.find(
+	const alreadyAttending = eventsAttending?.find(
 		(item) => item === selectedEvent?._id
 	);
 
@@ -88,7 +94,11 @@ const EventModal = () => {
 	const handleChange = (input, value) => {
 		switch (input) {
 			case 'type':
-				setChecked(value);
+				dispatch(setEventType(value));
+				break;
+
+			case 'other':
+				dispatch(setEventTypeInput(value));
 				break;
 
 			case 'time':
@@ -134,37 +144,41 @@ const EventModal = () => {
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		let data;
-		if (!checked && selectedEvent) {
-			data = {
-				eventId: selectedEvent?._id,
-				headcount,
-			};
-			dispatch(attendEvent(data));
-		} else if (checked && eventAuthor === currentUser) {
-			data = {
-				_id: selectedEvent?._id,
-				...(eventTime && { time: eventTime }),
-				...(eventLoc && { location: eventLoc }),
-				...(selectedLabel !== selectedEvent?.label && {
-					label: selectedLabel,
-				}),
-			};
-			dispatch(updateEvent(data));
-		} else if (checked && !selectedEvent) {
+		if (!selectedEvent) {
 			data = {
 				date: daySelected.format('M/DD/YYYY'),
+				eventType: eventType === 'other' ? eventTypeInput : eventType,
 				time: eventTime,
 				location: eventLoc,
 				label: selectedLabel,
 			};
 			dispatch(createEvent(data));
+		} else if (selectedEvent && eventAuthor === currentUser) {
+			data = {
+				_id: selectedEvent?._id,
+				...(eventType !== selectedEvent?.type && {
+					type: eventType === 'other' ? eventTypeInput : eventType,
+				}),
+				...(eventTime !== selectedEvent?.time && { time: eventTime }),
+				...(eventLoc !== selectedEvent?.location && { location: eventLoc }),
+				...(selectedLabel !== selectedEvent?.label && {
+					label: selectedLabel,
+				}),
+			};
+			dispatch(updateEvent(data));
+		} else if (selectedEvent) {
+			data = {
+				eventId: selectedEvent?._id,
+				headcount,
+			};
+			dispatch(attendEvent(data));
 		}
 	};
 
 	return (
-		<Dialog open={open} onClose={handleClose} maxWidth='xs'>
+		<Dialog open={open} onClose={handleClose} maxWidth='s'>
 			<DialogTitle className='title'>
-				{selectedEvent && checked ? (
+				{selectedEvent && eventAuthor === currentUser ? (
 					<Tooltip title='Send Reminders' placement='top'>
 						<IconButton onClick={handleReminders}>
 							<SendToMobileIcon className='send-reminder' />
@@ -173,18 +187,15 @@ const EventModal = () => {
 				) : (
 					<DragHandleIcon />
 				)}
-				{user?.isAdmin && (
-					<div className='content-switch'>
-						<h6>RSVP</h6>
-						<Switch
-							checked={checked}
-							size='small'
-							color='secondary'
-							onChange={(e) => handleChange('type', e.target.checked)}
-						/>
-						<h6>Create</h6>
-					</div>
-				)}
+				<div className='content-switch'>
+					<h6>
+						{!selectedEvent
+							? 'Create'
+							: selectedEvent && eventAuthor === currentUser
+							? 'Manage'
+							: 'RSVP'}
+					</h6>
+				</div>
 				<IconButton onClick={handleClose}>
 					<CloseIcon />
 				</IconButton>
@@ -192,8 +203,9 @@ const EventModal = () => {
 			<DialogContent>
 				{user && (
 					<>
-						{user.isAdmin && checked ? (
-							<FormControl>
+						{!selectedEvent ||
+						(selectedEvent && eventAuthor === currentUser) ? (
+							<>
 								<div className='event-date'>
 									<CalendarMonthIcon className='icon' />
 									<h5>
@@ -204,111 +216,149 @@ const EventModal = () => {
 										)}
 									</h5>
 								</div>
-								<TextField
-									sx={{ marginBottom: '20px' }}
-									size='small'
-									label='Time'
-									variant='standard'
-									value={eventTime}
-									onChange={(e) => handleChange('time', e.target.value)}
-									InputProps={{
-										startAdornment: (
-											<InputAdornment position='start'>
-												<ScheduleIcon className='add-on' />
-											</InputAdornment>
-										),
-									}}
-								/>
-								{errors && errors.time && (
-									<h6 className='error'>{errors.time}</h6>
-								)}
-								<TextField
-									sx={{ marginBottom: '25px' }}
-									size='small'
-									label='Location'
-									variant='standard'
-									value={eventLoc}
-									onChange={(e) => handleChange('loc', e.target.value)}
-									InputProps={{
-										startAdornment: (
-											<InputAdornment position='start'>
-												<MyLocationIcon className='add-on' />
-											</InputAdornment>
-										),
-									}}
-								/>
-								{errors && errors.location && (
-									<h6 className='error'>{errors.location}</h6>
-								)}
-								<div className='event-tags'>
-									<BookmarkBorderIcon className='icon' />
-									<div className='tag-swatch'>
-										{labelClasses.map((item, i) => (
-											<span
-												key={i}
-												onClick={() => handleChange('label', item)}
-												style={tagStyle(item)}
-											>
-												{selectedLabel === item && <CheckIcon fontSize='4' />}
-											</span>
-										))}
+								<FormControl size='small'>
+									<div className='event-type'>
+										<InputLabel id='event-type'>Event Type</InputLabel>
+										<Select
+											labelId='event-type'
+											value={eventType}
+											label='Event Type'
+											onChange={(e) => handleChange('type', e.target.value)}
+											fullWidth
+										>
+											<MenuItem value=''>
+												<em>None</em>
+											</MenuItem>
+											<MenuItem value='Brunch'>Brunch</MenuItem>
+											<MenuItem value='Dinner'>Dinner</MenuItem>
+											<MenuItem value='Movies'>Movies</MenuItem>
+											<MenuItem value='Game Night'>Game Night</MenuItem>
+											<MenuItem value='Party'>Party</MenuItem>
+											<MenuItem value='other'>Other</MenuItem>
+										</Select>
 									</div>
-								</div>
-							</FormControl>
-						) : (
-							<>
-								<FormControl>
-									<div className='event-date'>
-										<ScheduleIcon className='icon' />
-										<h5>
-											{selectedEvent ? (
-												<>{dayjs(selectedEvent.date).format('dddd, MMMM DD')}</>
-											) : (
-												<>{daySelected?.format('dddd, MMMM DD')}</>
-											)}
-										</h5>
-									</div>
-									<div className='event-loc'>
-										<MyLocationIcon className='icon' />
-										<h5>
-											{selectedEvent ? <>{selectedEvent.location}</> : 'TBD'}
-										</h5>
-									</div>
-									{alreadyAttending ? (
-										<>
-											<DialogContentText>
-												RSVP received, you're all set!
-											</DialogContentText>
-										</>
-									) : (
-										<>
-											<DialogContentText>
-												Hello, {user.firstName}! How many in your party?
-											</DialogContentText>
-											<TextField
-												disabled={!selectedEvent}
-												sx={{ marginTop: '15px' }}
-												size='small'
-												label='Headcount'
-												variant='standard'
-												value={headcount}
-												onChange={(e) => handleChange('count', e.target.value)}
-												onFocus={() => dispatch(clearErrors())}
-												InputProps={{
-													startAdornment: (
-														<InputAdornment position='start'>
-															<GroupAddIcon className='add-on' />
-														</InputAdornment>
-													),
-												}}
-											/>
-											{errors?.headcount && (
-												<h6 className='error'>{errors?.headcount}</h6>
-											)}
-										</>
+									{eventType === 'other' && (
+										<TextField
+											sx={{ marginBottom: '20px' }}
+											label='Go on...'
+											variant='standard'
+											value={eventTypeInput}
+											onChange={(e) => handleChange('other', e.target.value)}
+											InputProps={{
+												startAdornment: (
+													<InputAdornment position='start'>
+														<DetailsIcon className='add-on' />
+													</InputAdornment>
+												),
+											}}
+										/>
 									)}
+									<TextField
+										sx={{ marginBottom: '20px' }}
+										label='Time'
+										variant='standard'
+										value={eventTime}
+										onChange={(e) => handleChange('time', e.target.value)}
+										InputProps={{
+											startAdornment: (
+												<InputAdornment position='start'>
+													<ScheduleIcon className='add-on' />
+												</InputAdornment>
+											),
+										}}
+									/>
+									{errors && errors.time && (
+										<h6 className='error'>{errors.time}</h6>
+									)}
+									<TextField
+										sx={{ marginBottom: '25px' }}
+										label='Location'
+										variant='standard'
+										value={eventLoc}
+										onChange={(e) => handleChange('loc', e.target.value)}
+										InputProps={{
+											startAdornment: (
+												<InputAdornment position='start'>
+													<MyLocationIcon className='add-on' />
+												</InputAdornment>
+											),
+										}}
+									/>
+									{errors && errors.location && (
+										<h6 className='error'>{errors.location}</h6>
+									)}
+									<div className='event-tags'>
+										<BookmarkBorderIcon className='icon' />
+										<div className='tag-swatch'>
+											{labelClasses.map((item, i) => (
+												<span
+													key={i}
+													onClick={() => handleChange('label', item)}
+													style={tagStyle(item)}
+												>
+													{selectedLabel === item && <CheckIcon fontSize='4' />}
+												</span>
+											))}
+										</div>
+									</div>
 								</FormControl>
 							</>
+						) : (
+							<FormControl>
+								<div className='event-type'>
+									<LocalActivityIcon className='icon' />
+									<h5>{selectedEvent?.type}</h5>
+								</div>
+								<div className='event-date'>
+									<ScheduleIcon className='icon' />
+									<h5>
+										{selectedEvent ? (
+											<>{dayjs(selectedEvent.date).format('dddd, MMMM DD')}</>
+										) : (
+											<>{daySelected?.format('dddd, MMMM DD')}</>
+										)}
+									</h5>
+								</div>
+								<div className='event-loc'>
+									<MyLocationIcon className='icon' />
+									<h5>
+										{selectedEvent ? <>{selectedEvent.location}</> : 'TBD'}
+									</h5>
+								</div>
+								{alreadyAttending ? (
+									<>
+										<DialogContentText>
+											RSVP received, you're all set!
+										</DialogContentText>
+									</>
+								) : (
+									<>
+										<DialogContentText>
+											Hello, {user.firstName}! How many in your party?
+										</DialogContentText>
+										<TextField
+											disabled={!selectedEvent}
+											sx={{ marginTop: '15px' }}
+											size='small'
+											label='Headcount'
+											variant='standard'
+											value={headcount}
+											onChange={(e) => handleChange('count', e.target.value)}
+											onFocus={() => dispatch(clearErrors())}
+											InputProps={{
+												startAdornment: (
+													<InputAdornment position='start'>
+														<GroupAddIcon className='add-on' />
+													</InputAdornment>
+												),
+											}}
+										/>
+										{errors?.headcount && (
+											<h6 className='error'>{errors?.headcount}</h6>
+										)}
+									</>
+								)}
+							</FormControl>
 						)}
 					</>
 				)}
@@ -318,29 +368,38 @@ const EventModal = () => {
 				<DialogActions
 					sx={{
 						justifyContent:
-							eventAuthor === currentUser && checked
+							selectedEvent && eventAuthor === currentUser
 								? 'space-between'
 								: 'flex-end',
 					}}
 				>
-					{!checked && alreadyAttending && (
+					{selectedEvent && alreadyAttending && (
 						<Tooltip title='Undo' placement='right'>
 							<IconButton onClick={handleUndo}>
 								<UndoIcon className='undo' />
 							</IconButton>
 						</Tooltip>
 					)}
-					{!checked && !alreadyAttending && (
-						<Button onClick={handleSubmit}>Submit</Button>
+					{selectedEvent && !alreadyAttending && (
+						<Button disabled={!headcount} onClick={handleSubmit}>
+							Submit
+						</Button>
 					)}
-					{checked && eventAuthor === currentUser && (
+					{selectedEvent && eventAuthor === currentUser && (
 						<Tooltip title='Delete' placement='right'>
 							<IconButton onClick={handleDelete}>
 								<DeleteIcon className='delete' />
 							</IconButton>
 						</Tooltip>
 					)}
-					{checked && <Button onClick={handleSubmit}>Submit</Button>}
+					{!selectedEvent && (
+						<Button
+							disabled={!eventType || !eventTime || !eventLoc}
+							onClick={handleSubmit}
+						>
+							Submit
+						</Button>
+					)}
 				</DialogActions>
 			)}
 		</Dialog>

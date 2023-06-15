@@ -23,7 +23,7 @@ const authPersistConfig = {
 const calendarPersistConfig = {
 	key: 'calendar',
 	storage,
-	whitelist: ['myEvents'],
+	whitelist: ['eventsAttending'],
 };
 
 export const store = configureStore({

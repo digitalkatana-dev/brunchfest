@@ -10,6 +10,7 @@
 }
 
 .event-date,
+.event-type,
 .event-loc,
 .event-tags {
 	display: flex;
@@ -19,6 +20,10 @@
 	.icon {
 		margin-right: 7px;
 	}
+}
+
+.event-date {
+	margin-bottom: 20px;
 }
 
 .add-on {

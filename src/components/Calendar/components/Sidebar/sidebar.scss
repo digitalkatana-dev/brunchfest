@@ -1,13 +1,5 @@
 .sidebar {
-	// border: 1px solid dodgerblue;
-	display: flex;
-	justify-content: center;
-	padding: 2px 4px;
-	margin: 10px 0;
-
-	.small-cal {
-		display: none;
-	}
+	display: none;
 }
 
 @media only screen and (min-width: 500px) {
@@ -16,9 +8,11 @@
 }
 @media only screen and (min-width: 900px) {
 	.sidebar {
+		display: flex;
 		flex-direction: column;
 		justify-content: flex-start;
 		align-items: center;
+		padding: 2px 4px;
 		margin: 0 10px;
 
 		.small-cal {

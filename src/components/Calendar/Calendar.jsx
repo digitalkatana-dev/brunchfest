@@ -5,7 +5,7 @@ import { getUser } from '../../redux/slices/authSlice';
 import {
 	setCurrentMonth,
 	getAllEvents,
-	setMyEvents,
+	setEventsAttending,
 	clearSuccess,
 	clearErrors,
 } from '../../redux/slices/calendarSlice';
@@ -23,7 +23,7 @@ const Calendar = () => {
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		dispatch(setMyEvents(user?.myEvents));
+		dispatch(setEventsAttending(user?.eventsAttending));
 	}, [user]);
 
 	useEffect(() => {
