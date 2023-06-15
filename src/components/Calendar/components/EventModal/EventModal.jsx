@@ -156,8 +156,8 @@ const EventModal = () => {
 		} else if (selectedEvent && eventAuthor === currentUser) {
 			data = {
 				_id: selectedEvent?._id,
-				...(eventType !== selectedEvent?.eventType && {
-					eventType: eventType === 'other' ? eventTypeInput : eventType,
+				...(eventType !== selectedEvent?.type && {
+					type: eventType === 'other' ? eventTypeInput : eventType,
 				}),
 				...(eventTime !== selectedEvent?.time && { time: eventTime }),
 				...(eventLoc !== selectedEvent?.location && { location: eventLoc }),
@@ -307,7 +307,7 @@ const EventModal = () => {
 							<FormControl>
 								<div className='event-type'>
 									<LocalActivityIcon className='icon' />
-									<h5>{selectedEvent?.eventType}</h5>
+									<h5>{selectedEvent?.type}</h5>
 								</div>
 								<div className='event-date'>
 									<ScheduleIcon className='icon' />
