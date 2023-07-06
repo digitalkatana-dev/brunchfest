@@ -32,6 +32,7 @@ import {
 	cancelRsvp,
 	updateEvent,
 	sendReminders,
+	inviteSingle,
 	deleteEvent,
 	setSelectedEvent,
 	setErrors,
@@ -162,6 +163,17 @@ const EventModal = () => {
 		dispatch(sendReminders(data));
 	};
 
+	const handleInvite = (item) => {
+		const data = {
+			type: selectedEvent?.type,
+			date: selectedEvent?.date,
+			time: selectedEvent?.time,
+			guest: item,
+		};
+
+		dispatch(inviteSingle(data));
+	};
+
 	const handleDelete = () => {
 		dispatch(deleteEvent(selectedEvent?._id));
 		dispatch(toggleOpen(false));
@@ -223,252 +235,258 @@ const EventModal = () => {
 				</IconBtn>
 			</DialogTitle>
 			<DialogContent>
-				{user && (
-					<>
-						{!selectedEvent ||
-						(selectedEvent && eventAuthor === currentUser) ? (
-							<FormControl
-								variant='standard'
-								sx={{ m: 1, minWidth: 120 }}
-								size='small'
-							>
-								<div className='event-section alt'>
-									<InputLabel id='event-type'>Event Type</InputLabel>
-									<Select
-										labelId='event-type'
-										value={eventType}
-										onChange={(e) => handleChange('type', e.target.value)}
-										fullWidth
-									>
-										<MenuItem value=''>
-											<em>None</em>
-										</MenuItem>
-										<MenuItem value='Brunch'>Brunch</MenuItem>
-										<MenuItem value='Dinner'>Dinner</MenuItem>
-										<MenuItem value='Movies'>Movies</MenuItem>
-										<MenuItem value='Game Night'>Game Night</MenuItem>
-										<MenuItem value='Party'>Party</MenuItem>
-										<MenuItem value='other'>Other</MenuItem>
-									</Select>
-									{eventType === 'other' && (
+				<FormControl
+					variant='standard'
+					sx={{ m: 1, minWidth: 120 }}
+					size='small'
+				>
+					{user && (
+						<>
+							{!selectedEvent ||
+							(selectedEvent && eventAuthor === currentUser) ? (
+								<>
+									<div className='event-section alt'>
+										<InputLabel id='event-type'>Event Type</InputLabel>
+										<Select
+											labelId='event-type'
+											value={eventType}
+											onChange={(e) => handleChange('type', e.target.value)}
+											fullWidth
+										>
+											<MenuItem value=''>
+												<em>None</em>
+											</MenuItem>
+											<MenuItem value='Brunch'>Brunch</MenuItem>
+											<MenuItem value='Dinner'>Dinner</MenuItem>
+											<MenuItem value='Movies'>Movies</MenuItem>
+											<MenuItem value='Game Night'>Game Night</MenuItem>
+											<MenuItem value='Party'>Party</MenuItem>
+											<MenuItem value='other'>Other</MenuItem>
+										</Select>
+										{eventType === 'other' && (
+											<TextField
+												fullWidth
+												sx={{ marginTop: '15px' }}
+												label='Go on...'
+												variant='standard'
+												value={eventTypeInput}
+												onChange={(e) => handleChange('other', e.target.value)}
+												InputProps={{
+													startAdornment: (
+														<InputAdornment position='start'>
+															<DetailsIcon className='icon' />
+														</InputAdornment>
+													),
+												}}
+											/>
+										)}
+									</div>
+									<div className='event-section'>
+										<CalendarMonthIcon className='icon space' />
+										<h5>
+											{selectedEvent ? (
+												<>{dayjs(selectedEvent.date).format('dddd, MMMM DD')}</>
+											) : (
+												<>{daySelected?.format('dddd, MMMM DD')}</>
+											)}
+										</h5>
+									</div>
+									<div className='event-section'>
 										<TextField
 											fullWidth
-											sx={{ marginTop: '15px' }}
-											label='Go on...'
+											label='Time'
 											variant='standard'
-											value={eventTypeInput}
-											onChange={(e) => handleChange('other', e.target.value)}
+											value={eventTime}
+											onChange={(e) => handleChange('time', e.target.value)}
 											InputProps={{
 												startAdornment: (
 													<InputAdornment position='start'>
-														<DetailsIcon className='icon' />
+														<ScheduleIcon className='icon' />
 													</InputAdornment>
 												),
 											}}
 										/>
-									)}
-								</div>
-								<div className='event-section'>
-									<CalendarMonthIcon className='icon space' />
-									<h5>
-										{selectedEvent ? (
-											<>{dayjs(selectedEvent.date).format('dddd, MMMM DD')}</>
-										) : (
-											<>{daySelected?.format('dddd, MMMM DD')}</>
+										{errors && errors.time && (
+											<h6 className='error'>{errors.time}</h6>
 										)}
-									</h5>
-								</div>
-								<div className='event-section'>
-									<TextField
-										fullWidth
-										label='Time'
-										variant='standard'
-										value={eventTime}
-										onChange={(e) => handleChange('time', e.target.value)}
-										InputProps={{
-											startAdornment: (
-												<InputAdornment position='start'>
-													<ScheduleIcon className='icon' />
-												</InputAdornment>
-											),
-										}}
-									/>
-									{errors && errors.time && (
-										<h6 className='error'>{errors.time}</h6>
-									)}
-								</div>
-								<div className='event-section'>
-									<TextField
-										fullWidth
-										label='Location'
-										variant='standard'
-										value={eventLoc}
-										onChange={(e) => handleChange('loc', e.target.value)}
-										InputProps={{
-											startAdornment: (
-												<InputAdornment position='start'>
-													<MyLocationIcon className='icon' />
-												</InputAdornment>
-											),
-										}}
-									/>
-									{errors && errors.location && (
-										<h6 className='error'>{errors.location}</h6>
-									)}
-								</div>
-								<div className='event-section'>
-									<BookmarkBorderIcon className='icon space' />
-									<div className='tag-swatch'>
-										{labelClasses.map((item, i) => (
-											<span
-												key={i}
-												onClick={() => handleChange('label', item)}
-												style={tagStyle(item)}
-											>
-												{selectedLabel === item && <CheckIcon fontSize='4' />}
-											</span>
-										))}
 									</div>
-								</div>
-								<div className='event-section alt'>
-									<div style={{ display: 'flex', alignItems: 'center' }}>
+									<div className='event-section'>
 										<TextField
-											label='Invite Guests'
-											placeholder='Email Or Phone'
+											fullWidth
+											label='Location'
 											variant='standard'
-											value={invitedGuestInput}
-											onChange={(e) => handleChange('guest', e.target.value)}
+											value={eventLoc}
+											onChange={(e) => handleChange('loc', e.target.value)}
 											InputProps={{
 												startAdornment: (
 													<InputAdornment position='start'>
-														<PersonAddIcon className='icon' />
+														<MyLocationIcon className='icon' />
 													</InputAdornment>
 												),
 											}}
-											onFocus={() => dispatch(clearErrors())}
 										/>
-										<IconBtn
-											tooltip='Add Guest'
-											placement='top'
-											disabled={!invitedGuestInput}
-											onClick={handleAdd}
-										>
-											<AddBoxIcon className='add-icon' />
-										</IconBtn>
+										{errors && errors.location && (
+											<h6 className='error'>{errors.location}</h6>
+										)}
 									</div>
-									{errors && errors.guest && (
-										<h6 className='error'>{errors.guest}</h6>
-									)}
-									{invitedGuests.length > 0 && (
-										<List
-											style={{
-												width: '100%',
-												marginTop: '20px',
-											}}
-										>
-											<ListItem
-												disablePadding
-												style={{ borderBottom: '1px solid steelblue' }}
+									<div className='event-section'>
+										<BookmarkBorderIcon className='icon space' />
+										<div className='tag-swatch'>
+											{labelClasses.map((item, i) => (
+												<span
+													key={i}
+													onClick={() => handleChange('label', item)}
+													style={tagStyle(item)}
+												>
+													{selectedLabel === item && <CheckIcon fontSize='4' />}
+												</span>
+											))}
+										</div>
+									</div>
+									<div className='event-section alt'>
+										<div style={{ display: 'flex', alignItems: 'center' }}>
+											<TextField
+												label='Invite Guests'
+												placeholder='Email Or Phone'
+												variant='standard'
+												value={invitedGuestInput}
+												onChange={(e) => handleChange('guest', e.target.value)}
+												InputProps={{
+													startAdornment: (
+														<InputAdornment position='start'>
+															<PersonAddIcon className='icon' />
+														</InputAdornment>
+													),
+												}}
+												onFocus={() => dispatch(clearErrors())}
+											/>
+											<IconBtn
+												tooltip='Add Guest'
+												placement='top'
+												disabled={!invitedGuestInput}
+												onClick={handleAdd}
 											>
-												<ListItemText secondary='Invited Guests' />
-												{selectedEvent && eventAuthor === currentUser && (
-													<IconBtn
-														tooltip='Send Reminders'
-														placement='top'
-														onClick={handleReminders}
-													>
-														<SendToMobileIcon htmlColor='steelblue' />
-													</IconBtn>
-												)}
-											</ListItem>
-											{invitedGuests?.map((item) => (
+												<AddBoxIcon className='add-icon' />
+											</IconBtn>
+										</div>
+										{errors && errors.guest && (
+											<h6 className='error'>{errors.guest}</h6>
+										)}
+										{invitedGuests.length > 0 && (
+											<List
+												style={{
+													width: '100%',
+													marginTop: '20px',
+												}}
+											>
 												<ListItem
 													disablePadding
-													style={{
-														borderBottom: '1px solid grey',
-														marginTop: '10px',
-													}}
-													key={item}
+													style={{ borderBottom: '1px solid steelblue' }}
 												>
-													<ListItemText primary={item} />
+													<ListItemText secondary='Invited Guests' />
 													{selectedEvent && eventAuthor === currentUser && (
-														<IconBtn tooltip='Send Invite' placement='top'>
+														<IconBtn
+															tooltip='Send Reminders'
+															placement='top'
+															onClick={handleReminders}
+														>
 															<SendToMobileIcon htmlColor='steelblue' />
 														</IconBtn>
 													)}
-													<IconBtn
-														tooltip='Delete Guest'
-														placement='top'
-														onClick={() => dispatch(removeInvitedGuest(item))}
-													>
-														<DeleteIcon htmlColor='red' />
-													</IconBtn>
 												</ListItem>
-											))}
-										</List>
+												{invitedGuests?.map((item) => (
+													<ListItem
+														disablePadding
+														style={{
+															borderBottom: '1px solid grey',
+															marginTop: '10px',
+														}}
+														key={item}
+													>
+														<ListItemText primary={item} />
+														{selectedEvent && eventAuthor === currentUser && (
+															<IconBtn
+																tooltip='Send Invite'
+																placement='top'
+																onClick={() => handleInvite(item)}
+															>
+																<SendToMobileIcon htmlColor='steelblue' />
+															</IconBtn>
+														)}
+														<IconBtn
+															tooltip='Delete Guest'
+															placement='top'
+															onClick={() => dispatch(removeInvitedGuest(item))}
+														>
+															<DeleteIcon htmlColor='red' />
+														</IconBtn>
+													</ListItem>
+												))}
+											</List>
+										)}
+									</div>
+								</>
+							) : (
+								<>
+									<div className='event-section'>
+										<LocalActivityIcon className='icon space' />
+										<h5>{selectedEvent?.type}</h5>
+									</div>
+									<div className='event-section'>
+										<ScheduleIcon className='icon space' />
+										<h5>
+											{selectedEvent ? (
+												<>{dayjs(selectedEvent.date).format('dddd, MMMM DD')}</>
+											) : (
+												<>{daySelected?.format('dddd, MMMM DD')}</>
+											)}
+										</h5>
+									</div>
+									<div className='event-section'>
+										<MyLocationIcon className='icon space' />
+										<h5>
+											{selectedEvent ? <>{selectedEvent.location}</> : 'TBD'}
+										</h5>
+									</div>
+									{alreadyAttending ? (
+										<>
+											<DialogContentText>
+												RSVP received, you're all set!
+											</DialogContentText>
+										</>
+									) : (
+										<>
+											<DialogContentText>
+												Hello, {user.firstName}! How many in your party?
+											</DialogContentText>
+											<TextField
+												disabled={!selectedEvent}
+												sx={{ marginTop: '15px' }}
+												size='small'
+												label='Headcount'
+												variant='standard'
+												value={headcount}
+												onChange={(e) => handleChange('count', e.target.value)}
+												onFocus={() => dispatch(clearErrors())}
+												InputProps={{
+													startAdornment: (
+														<InputAdornment position='start'>
+															<GroupAddIcon className='icon' />
+														</InputAdornment>
+													),
+												}}
+											/>
+											{errors?.headcount && (
+												<h6 className='error'>{errors?.headcount}</h6>
+											)}
+										</>
 									)}
-								</div>
-							</FormControl>
-						) : (
-							<FormControl>
-								<div className='event-type'>
-									<LocalActivityIcon className='icon' />
-									<h5>{selectedEvent?.type}</h5>
-								</div>
-								<div className='event-date'>
-									<ScheduleIcon className='icon' />
-									<h5>
-										{selectedEvent ? (
-											<>{dayjs(selectedEvent.date).format('dddd, MMMM DD')}</>
-										) : (
-											<>{daySelected?.format('dddd, MMMM DD')}</>
-										)}
-									</h5>
-								</div>
-								<div className='event-loc'>
-									<MyLocationIcon className='icon' />
-									<h5>
-										{selectedEvent ? <>{selectedEvent.location}</> : 'TBD'}
-									</h5>
-								</div>
-								{alreadyAttending ? (
-									<>
-										<DialogContentText>
-											RSVP received, you're all set!
-										</DialogContentText>
-									</>
-								) : (
-									<>
-										<DialogContentText>
-											Hello, {user.firstName}! How many in your party?
-										</DialogContentText>
-										<TextField
-											disabled={!selectedEvent}
-											sx={{ marginTop: '15px' }}
-											size='small'
-											label='Headcount'
-											variant='standard'
-											value={headcount}
-											onChange={(e) => handleChange('count', e.target.value)}
-											onFocus={() => dispatch(clearErrors())}
-											InputProps={{
-												startAdornment: (
-													<InputAdornment position='start'>
-														<GroupAddIcon className='icon' />
-													</InputAdornment>
-												),
-											}}
-										/>
-										{errors?.headcount && (
-											<h6 className='error'>{errors?.headcount}</h6>
-										)}
-									</>
-								)}
-							</FormControl>
-						)}
-					</>
-				)}
-				{!user && <DialogContentText>Sign in to RSVP!</DialogContentText>}
+								</>
+							)}
+						</>
+					)}
+					{!user && <DialogContentText>Sign in to RSVP!</DialogContentText>}
+				</FormControl>
 			</DialogContent>
 			{user && (
 				<DialogActions

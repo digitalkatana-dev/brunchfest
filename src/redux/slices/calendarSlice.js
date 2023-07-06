@@ -95,6 +95,18 @@ export const sendReminders = createAsyncThunk(
 	}
 );
 
+export const inviteSingle = createAsyncThunk(
+	'calendar/send_invite',
+	async (eventInfo, { rejectWithValue }) => {
+		try {
+			const res = await brunchApi.post('/events/invite', eventInfo);
+			return res.data;
+		} catch (err) {
+			return rejectWithValue(err.response.data);
+		}
+	}
+);
+
 export const deleteEvent = createAsyncThunk(
 	'calendar/delete_event',
 	async (eventInfo, { rejectWithValue }) => {
@@ -338,6 +350,18 @@ export const calendarSlice = createSlice({
 				state.success = action.payload;
 			})
 			.addCase(sendReminders.rejected, (state, action) => {
+				state.loading = false;
+				state.errors = action.payload;
+			})
+			.addCase(inviteSingle.pending, (state) => {
+				state.loading = true;
+				state.errors = null;
+			})
+			.addCase(inviteSingle.fulfilled, (state, action) => {
+				state.loading = false;
+				state.success = action.payload;
+			})
+			.addCase(inviteSingle.rejected, (state, action) => {
 				state.loading = false;
 				state.errors = action.payload;
 			})
