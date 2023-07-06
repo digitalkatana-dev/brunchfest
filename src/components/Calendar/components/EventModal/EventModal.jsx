@@ -6,13 +6,14 @@ import {
 	DialogContentText,
 	DialogTitle,
 	FormControl,
-	IconButton,
 	InputAdornment,
 	InputLabel,
+	List,
+	ListItem,
+	ListItemText,
 	MenuItem,
 	Select,
 	TextField,
-	Tooltip,
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -21,6 +22,9 @@ import {
 	setEventTypeInput,
 	setEventTime,
 	setEventLoc,
+	setInvitedGuestInput,
+	addInvitedGuest,
+	removeInvitedGuest,
 	setHeadcount,
 	setSelectedLabel,
 	createEvent,
@@ -30,9 +34,11 @@ import {
 	sendReminders,
 	deleteEvent,
 	setSelectedEvent,
+	setErrors,
 	clearErrors,
 } from '../../../../redux/slices/calendarSlice';
 import { labelClasses } from '../../../../util/data';
+import { validateInvitedGuest } from '../../../../util/validators';
 import dayjs from 'dayjs';
 import DragHandleIcon from '@mui/icons-material/DragHandle';
 import SendToMobileIcon from '@mui/icons-material/SendToMobile';
@@ -47,6 +53,9 @@ import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import DeleteIcon from '@mui/icons-material/Delete';
 import UndoIcon from '@mui/icons-material/Undo';
 import LocalActivityIcon from '@mui/icons-material/LocalActivity';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import AddBoxIcon from '@mui/icons-material/AddBox';
+import IconBtn from '../../../IconBtn';
 import './eventModal.scss';
 
 const EventModal = () => {
@@ -58,6 +67,8 @@ const EventModal = () => {
 		eventTypeInput,
 		eventTime,
 		eventLoc,
+		invitedGuestInput,
+		invitedGuests,
 		headcount,
 		selectedLabel,
 		selectedEvent,
@@ -113,12 +124,27 @@ const EventModal = () => {
 				dispatch(setSelectedLabel(value));
 				break;
 
+			case 'guest':
+				dispatch(setInvitedGuestInput(value));
+				break;
+
 			case 'count':
 				dispatch(setHeadcount(value));
 				break;
 
 			default:
 				break;
+		}
+	};
+
+	const handleAdd = () => {
+		const { valid, errors } = validateInvitedGuest(invitedGuestInput);
+
+		if (!valid) {
+			dispatch(setErrors(errors));
+		} else {
+			dispatch(addInvitedGuest(invitedGuestInput));
+			dispatch(setInvitedGuestInput(''));
 		}
 	};
 
@@ -151,6 +177,7 @@ const EventModal = () => {
 				time: eventTime,
 				location: eventLoc,
 				label: selectedLabel,
+				...(invitedGuests.length > 0 && { invitedGuests }),
 			};
 			dispatch(createEvent(data));
 		} else if (selectedEvent && eventAuthor === currentUser) {
@@ -163,6 +190,9 @@ const EventModal = () => {
 				...(eventLoc !== selectedEvent?.location && { location: eventLoc }),
 				...(selectedLabel !== selectedEvent?.label && {
 					label: selectedLabel,
+				}),
+				...(invitedGuests !== selectedEvent?.invitedGuests && {
+					invitedGuests,
 				}),
 			};
 			dispatch(updateEvent(data));
@@ -178,15 +208,7 @@ const EventModal = () => {
 	return (
 		<Dialog open={open} onClose={handleClose} maxWidth='s'>
 			<DialogTitle className='title'>
-				{selectedEvent && eventAuthor === currentUser ? (
-					<Tooltip title='Send Reminders' placement='top'>
-						<IconButton onClick={handleReminders}>
-							<SendToMobileIcon className='send-reminder' />
-						</IconButton>
-					</Tooltip>
-				) : (
-					<DragHandleIcon />
-				)}
+				<DragHandleIcon />
 				<div className='content-switch'>
 					<h6>
 						{!selectedEvent
@@ -196,18 +218,58 @@ const EventModal = () => {
 							: 'RSVP'}
 					</h6>
 				</div>
-				<IconButton onClick={handleClose}>
+				<IconBtn tooltip='Close' onClick={handleClose}>
 					<CloseIcon />
-				</IconButton>
+				</IconBtn>
 			</DialogTitle>
 			<DialogContent>
 				{user && (
 					<>
 						{!selectedEvent ||
 						(selectedEvent && eventAuthor === currentUser) ? (
-							<>
-								<div className='event-date'>
-									<CalendarMonthIcon className='icon' />
+							<FormControl
+								variant='standard'
+								sx={{ m: 1, minWidth: 120 }}
+								size='small'
+							>
+								<div className='event-section alt'>
+									<InputLabel id='event-type'>Event Type</InputLabel>
+									<Select
+										labelId='event-type'
+										value={eventType}
+										onChange={(e) => handleChange('type', e.target.value)}
+										fullWidth
+									>
+										<MenuItem value=''>
+											<em>None</em>
+										</MenuItem>
+										<MenuItem value='Brunch'>Brunch</MenuItem>
+										<MenuItem value='Dinner'>Dinner</MenuItem>
+										<MenuItem value='Movies'>Movies</MenuItem>
+										<MenuItem value='Game Night'>Game Night</MenuItem>
+										<MenuItem value='Party'>Party</MenuItem>
+										<MenuItem value='other'>Other</MenuItem>
+									</Select>
+									{eventType === 'other' && (
+										<TextField
+											fullWidth
+											sx={{ marginTop: '15px' }}
+											label='Go on...'
+											variant='standard'
+											value={eventTypeInput}
+											onChange={(e) => handleChange('other', e.target.value)}
+											InputProps={{
+												startAdornment: (
+													<InputAdornment position='start'>
+														<DetailsIcon className='icon' />
+													</InputAdornment>
+												),
+											}}
+										/>
+									)}
+								</div>
+								<div className='event-section'>
+									<CalendarMonthIcon className='icon space' />
 									<h5>
 										{selectedEvent ? (
 											<>{dayjs(selectedEvent.date).format('dddd, MMMM DD')}</>
@@ -216,45 +278,9 @@ const EventModal = () => {
 										)}
 									</h5>
 								</div>
-								<FormControl size='small'>
-									<div className='event-type'>
-										<InputLabel id='event-type'>Event Type</InputLabel>
-										<Select
-											labelId='event-type'
-											value={eventType}
-											label='Event Type'
-											onChange={(e) => handleChange('type', e.target.value)}
-											fullWidth
-										>
-											<MenuItem value=''>
-												<em>None</em>
-											</MenuItem>
-											<MenuItem value='Brunch'>Brunch</MenuItem>
-											<MenuItem value='Dinner'>Dinner</MenuItem>
-											<MenuItem value='Movies'>Movies</MenuItem>
-											<MenuItem value='Game Night'>Game Night</MenuItem>
-											<MenuItem value='Party'>Party</MenuItem>
-											<MenuItem value='other'>Other</MenuItem>
-										</Select>
-									</div>
-									{eventType === 'other' && (
-										<TextField
-											sx={{ marginBottom: '20px' }}
-											label='Go on...'
-											variant='standard'
-											value={eventTypeInput}
-											onChange={(e) => handleChange('other', e.target.value)}
-											InputProps={{
-												startAdornment: (
-													<InputAdornment position='start'>
-														<DetailsIcon className='add-on' />
-													</InputAdornment>
-												),
-											}}
-										/>
-									)}
+								<div className='event-section'>
 									<TextField
-										sx={{ marginBottom: '20px' }}
+										fullWidth
 										label='Time'
 										variant='standard'
 										value={eventTime}
@@ -262,7 +288,7 @@ const EventModal = () => {
 										InputProps={{
 											startAdornment: (
 												<InputAdornment position='start'>
-													<ScheduleIcon className='add-on' />
+													<ScheduleIcon className='icon' />
 												</InputAdornment>
 											),
 										}}
@@ -270,8 +296,10 @@ const EventModal = () => {
 									{errors && errors.time && (
 										<h6 className='error'>{errors.time}</h6>
 									)}
+								</div>
+								<div className='event-section'>
 									<TextField
-										sx={{ marginBottom: '25px' }}
+										fullWidth
 										label='Location'
 										variant='standard'
 										value={eventLoc}
@@ -279,7 +307,7 @@ const EventModal = () => {
 										InputProps={{
 											startAdornment: (
 												<InputAdornment position='start'>
-													<MyLocationIcon className='add-on' />
+													<MyLocationIcon className='icon' />
 												</InputAdornment>
 											),
 										}}
@@ -287,22 +315,100 @@ const EventModal = () => {
 									{errors && errors.location && (
 										<h6 className='error'>{errors.location}</h6>
 									)}
-									<div className='event-tags'>
-										<BookmarkBorderIcon className='icon' />
-										<div className='tag-swatch'>
-											{labelClasses.map((item, i) => (
-												<span
-													key={i}
-													onClick={() => handleChange('label', item)}
-													style={tagStyle(item)}
-												>
-													{selectedLabel === item && <CheckIcon fontSize='4' />}
-												</span>
-											))}
-										</div>
+								</div>
+								<div className='event-section'>
+									<BookmarkBorderIcon className='icon space' />
+									<div className='tag-swatch'>
+										{labelClasses.map((item, i) => (
+											<span
+												key={i}
+												onClick={() => handleChange('label', item)}
+												style={tagStyle(item)}
+											>
+												{selectedLabel === item && <CheckIcon fontSize='4' />}
+											</span>
+										))}
 									</div>
-								</FormControl>
-							</>
+								</div>
+								<div className='event-section alt'>
+									<div style={{ display: 'flex', alignItems: 'center' }}>
+										<TextField
+											label='Invite Guests'
+											placeholder='Email Or Phone'
+											variant='standard'
+											value={invitedGuestInput}
+											onChange={(e) => handleChange('guest', e.target.value)}
+											InputProps={{
+												startAdornment: (
+													<InputAdornment position='start'>
+														<PersonAddIcon className='icon' />
+													</InputAdornment>
+												),
+											}}
+											onFocus={() => dispatch(clearErrors())}
+										/>
+										<IconBtn
+											tooltip='Add Guest'
+											placement='top'
+											disabled={!invitedGuestInput}
+											onClick={handleAdd}
+										>
+											<AddBoxIcon className='add-icon' />
+										</IconBtn>
+									</div>
+									{errors && errors.guest && (
+										<h6 className='error'>{errors.guest}</h6>
+									)}
+									{invitedGuests.length > 0 && (
+										<List
+											style={{
+												width: '100%',
+												marginTop: '20px',
+											}}
+										>
+											<ListItem
+												disablePadding
+												style={{ borderBottom: '1px solid steelblue' }}
+											>
+												<ListItemText secondary='Invited Guests' />
+												{selectedEvent && eventAuthor === currentUser && (
+													<IconBtn
+														tooltip='Send Reminders'
+														placement='top'
+														onClick={handleReminders}
+													>
+														<SendToMobileIcon htmlColor='steelblue' />
+													</IconBtn>
+												)}
+											</ListItem>
+											{invitedGuests?.map((item) => (
+												<ListItem
+													disablePadding
+													style={{
+														borderBottom: '1px solid grey',
+														marginTop: '10px',
+													}}
+													key={item}
+												>
+													<ListItemText primary={item} />
+													{selectedEvent && eventAuthor === currentUser && (
+														<IconBtn tooltip='Send Invite' placement='top'>
+															<SendToMobileIcon htmlColor='steelblue' />
+														</IconBtn>
+													)}
+													<IconBtn
+														tooltip='Delete Guest'
+														placement='top'
+														onClick={() => dispatch(removeInvitedGuest(item))}
+													>
+														<DeleteIcon htmlColor='red' />
+													</IconBtn>
+												</ListItem>
+											))}
+										</List>
+									)}
+								</div>
+							</FormControl>
 						) : (
 							<FormControl>
 								<div className='event-type'>
@@ -348,7 +454,7 @@ const EventModal = () => {
 											InputProps={{
 												startAdornment: (
 													<InputAdornment position='start'>
-														<GroupAddIcon className='add-on' />
+														<GroupAddIcon className='icon' />
 													</InputAdornment>
 												),
 											}}
@@ -374,21 +480,17 @@ const EventModal = () => {
 					}}
 				>
 					{selectedEvent && alreadyAttending && (
-						<Tooltip title='Undo' placement='right'>
-							<IconButton onClick={handleUndo}>
-								<UndoIcon className='undo' />
-							</IconButton>
-						</Tooltip>
+						<IconBtn tooltip='Undo' onClick={handleUndo}>
+							<UndoIcon className='undo' />
+						</IconBtn>
 					)}
 					{selectedEvent && !alreadyAttending && (
 						<Button onClick={handleSubmit}>Submit</Button>
 					)}
 					{selectedEvent && eventAuthor === currentUser && (
-						<Tooltip title='Delete' placement='right'>
-							<IconButton onClick={handleDelete}>
-								<DeleteIcon className='delete' />
-							</IconButton>
-						</Tooltip>
+						<IconBtn tooltip='Delete' placement='top' onClick={handleDelete}>
+							<DeleteIcon className='delete' />
+						</IconBtn>
 					)}
 					{!selectedEvent && (
 						<Button

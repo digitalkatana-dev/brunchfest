@@ -124,6 +124,8 @@ const initialState = calendarAdapter.getInitialState({
 	eventTime: '',
 	eventLoc: '',
 	selectedLabel: labelClasses[0],
+	invitedGuestInput: '',
+	invitedGuests: [],
 	headcount: '',
 	savedEvents: null,
 	selectedEvent: null,
@@ -176,6 +178,18 @@ export const calendarSlice = createSlice({
 		setSelectedLabel: (state, action) => {
 			state.selectedLabel = action.payload;
 		},
+		setInvitedGuestInput: (state, action) => {
+			state.invitedGuestInput = action.payload;
+		},
+		addInvitedGuest: (state, action) => {
+			state.invitedGuests = [...state.invitedGuests, action.payload];
+		},
+		removeInvitedGuest: (state, action) => {
+			const updated = state.invitedGuests.filter(
+				(item) => item !== action.payload
+			);
+			state.invitedGuests = updated;
+		},
 		setSelectedEvent: (state, action) => {
 			state.selectedEvent = action.payload;
 			if (action.payload === null) {
@@ -184,6 +198,8 @@ export const calendarSlice = createSlice({
 				state.eventTime = '';
 				state.eventLoc = '';
 				state.selectedLabel = labelClasses[0];
+				state.invitedGuestInput = '';
+				state.invitedGuests = [];
 			} else {
 				const optionMatch = typeOptions.find(
 					(item) => item === action.payload.type
@@ -193,6 +209,7 @@ export const calendarSlice = createSlice({
 				state.eventTime = action.payload.time;
 				state.eventLoc = action.payload.location;
 				state.selectedLabel = action.payload.label;
+				state.invitedGuests = action.payload.invitedGuests;
 			}
 		},
 		setGuestList: (state, action) => {
@@ -200,6 +217,9 @@ export const calendarSlice = createSlice({
 		},
 		setEventsAttending: (state, action) => {
 			state.eventsAttending = action.payload;
+		},
+		setErrors: (state, action) => {
+			state.errors = action.payload;
 		},
 		clearSuccess: (state) => {
 			state.success = null;
@@ -221,6 +241,9 @@ export const calendarSlice = createSlice({
 				state.eventTypeInput = '';
 				state.eventTime = '';
 				state.eventLoc = '';
+				state.selectedLabel = labelClasses[0];
+				state.invitedGuestInput = '';
+				state.invitedGuests = [];
 				state.open = false;
 			})
 			.addCase(createEvent.rejected, (state, action) => {
@@ -294,6 +317,13 @@ export const calendarSlice = createSlice({
 				state.savedEvents = action.payload.updatedAll;
 				state.selectedEvent = null;
 				state.open = false;
+				state.eventType = '';
+				state.eventTypeInput = '';
+				state.eventTime = '';
+				state.eventLoc = '';
+				state.selectedLabel = labelClasses[0];
+				state.invitedGuestInput = '';
+				state.invitedGuests = [];
 			})
 			.addCase(updateEvent.rejected, (state, action) => {
 				state.loading = false;
@@ -323,6 +353,8 @@ export const calendarSlice = createSlice({
 				state.eventTime = '';
 				state.eventLoc = '';
 				state.selectedLabel = labelClasses[0];
+				state.invitedGuestInput = '';
+				state.invitedGuests = [];
 			})
 			.addCase(deleteEvent.rejected, (state, action) => {
 				state.loading = false;
@@ -345,9 +377,13 @@ export const {
 	setEventLoc,
 	setHeadcount,
 	setSelectedLabel,
+	setInvitedGuestInput,
+	addInvitedGuest,
+	removeInvitedGuest,
 	setSelectedEvent,
 	setGuestList,
 	setEventsAttending,
+	setErrors,
 	clearSuccess,
 	clearErrors,
 } = calendarSlice.actions;
