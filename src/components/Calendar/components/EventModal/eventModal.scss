@@ -9,25 +9,31 @@
 	align-items: center;
 }
 
-.event-date,
-.event-type,
-.event-loc,
-.event-tags {
+.event-section {
+	// width: 250px;
+	min-height: 54px;
 	display: flex;
 	align-items: center;
 	margin-bottom: 10px;
 
-	.icon {
-		margin-right: 7px;
+	&.alt {
+		flex-direction: column;
+		justify-content: center;
 	}
-}
 
-.event-date {
-	margin-bottom: 20px;
-}
+	.icon {
+		width: 20px;
+		height: 20px;
+		color: grey;
 
-.add-on {
-	color: black;
+		&.space {
+			margin-right: 10px;
+		}
+	}
+
+	.add-icon {
+		color: green;
+	}
 }
 
 .tag-swatch {

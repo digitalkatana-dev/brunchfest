@@ -263,6 +263,7 @@ const Auth = () => {
 					{errors && errors.notify && (
 						<h6 className='error'>{errors.notify}</h6>
 					)}
+					{errors && errors.user && <h6 className='error'>{errors.user}</h6>}
 					<Button type='submit' loading={loading} label='SUBMIT' />
 				</FormControl>
 			</form>
