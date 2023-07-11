@@ -379,8 +379,15 @@ export const calendarSlice = createSlice({
 				state.errors = null;
 			})
 			.addCase(findGuest.fulfilled, (state, action) => {
+				const alreadyInvited = state.invitedGuests.find(
+					(item) => item._id === action.payload._id
+				);
 				state.loading = false;
-				state.invitedGuests = [...state.invitedGuests, action.payload];
+				if (alreadyInvited) {
+					state.errors = { invited: 'Guest already invited' };
+				} else {
+					state.invitedGuests = [...state.invitedGuests, action.payload];
+				}
 			})
 			.addCase(findGuest.rejected, (state, action) => {
 				state.loading = false;
