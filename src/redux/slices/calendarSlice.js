@@ -107,6 +107,18 @@ export const inviteSingle = createAsyncThunk(
 	}
 );
 
+export const findGuest = createAsyncThunk(
+	'calendar/find_guest',
+	async (guestInfo, { rejectWithValue }) => {
+		try {
+			const res = await brunchApi.post('/users/find', guestInfo);
+			return res.data;
+		} catch (err) {
+			return rejectWithValue(err.response.data);
+		}
+	}
+);
+
 export const deleteEvent = createAsyncThunk(
 	'calendar/delete_event',
 	async (eventInfo, { rejectWithValue }) => {
@@ -193,12 +205,9 @@ export const calendarSlice = createSlice({
 		setInvitedGuestInput: (state, action) => {
 			state.invitedGuestInput = action.payload;
 		},
-		addInvitedGuest: (state, action) => {
-			state.invitedGuests = [...state.invitedGuests, action.payload];
-		},
 		removeInvitedGuest: (state, action) => {
 			const updated = state.invitedGuests.filter(
-				(item) => item !== action.payload
+				(item) => item._id !== action.payload._id
 			);
 			state.invitedGuests = updated;
 		},
@@ -365,6 +374,18 @@ export const calendarSlice = createSlice({
 				state.loading = false;
 				state.errors = action.payload;
 			})
+			.addCase(findGuest.pending, (state) => {
+				state.loading = true;
+				state.errors = null;
+			})
+			.addCase(findGuest.fulfilled, (state, action) => {
+				state.loading = false;
+				state.invitedGuests = [...state.invitedGuests, action.payload];
+			})
+			.addCase(findGuest.rejected, (state, action) => {
+				state.loading = false;
+				state.errors = action.payload;
+			})
 			.addCase(deleteEvent.pending, (state) => {
 				state.loading = true;
 				state.errors = null;
@@ -402,7 +423,6 @@ export const {
 	setHeadcount,
 	setSelectedLabel,
 	setInvitedGuestInput,
-	addInvitedGuest,
 	removeInvitedGuest,
 	setSelectedEvent,
 	setGuestList,
