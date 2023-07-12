@@ -21,21 +21,35 @@ const GuestList = () => {
 			<div className='container'>
 				<img src='guest-book.png' alt='' />
 				<div className='overlay'>
-					{guestList?.map((guest) => (
-						<span key={guest._id}>
-							{guest.headcount - 1 >= 2 ? (
-								<>
-									{guest.name} + {guest.headcount - 1} guests
-								</>
-							) : guest.headcount - 1 > 0 ? (
-								<>
-									{guest.name} + {guest.headcount - 1} guest
-								</>
-							) : (
-								<>{guest.name}</>
-							)}
-						</span>
-					))}
+					{selectedEvent && (
+						<>
+							<span
+								style={{
+									fontSize: '10px',
+									alignSelf: 'center',
+									marginBottom: '5px',
+								}}
+							>
+								{selectedEvent?.type} @ {selectedEvent?.location} on{' '}
+								{selectedEvent?.date}
+							</span>
+							{guestList?.map((guest) => (
+								<span key={guest._id}>
+									{guest.headcount - 1 >= 2 ? (
+										<>
+											{guest.name} + {guest.headcount - 1} guests
+										</>
+									) : guest.headcount - 1 > 0 ? (
+										<>
+											{guest.name} + {guest.headcount - 1} guest
+										</>
+									) : (
+										<>{guest.name}</>
+									)}
+								</span>
+							))}
+						</>
+					)}
 				</div>
 			</div>
 		</div>
