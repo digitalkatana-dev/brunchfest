@@ -29,7 +29,7 @@ const CalendarHead = () => {
 	return (
 		<header className='head'>
 			<img src='logo.png' alt='' className='icon' />
-			<h3>Brunch Calendar</h3>
+			<h3>Event Calendar</h3>
 			<Button variant='outlined' className='today-btn' onClick={handleToday}>
 				Today
 			</Button>

@@ -11,6 +11,7 @@ import TouchableOpacity from '../../../TouchableOpacity';
 import './day.scss';
 
 const Day = ({ day, rowIdx }) => {
+	const { user } = useSelector((state) => state.auth);
 	const { savedEvents } = useSelector((state) => state.calendar);
 	const [dayEvents, setDayEvents] = useState([]);
 	const dispatch = useDispatch();
@@ -28,8 +29,20 @@ const Day = ({ day, rowIdx }) => {
 		const events = savedEvents?.filter(
 			(event) => dayjs(event.date).format('MM-DD-YY') === day.format('MM-DD-YY')
 		);
-		setDayEvents(events);
-	}, [savedEvents, day]);
+		const invited = events?.filter((event) =>
+			event.invitedGuests.find(
+				(item) =>
+					item?.phone === user?.phone ||
+					item?.email === user?.email ||
+					item?._id === user?._id
+			)
+		);
+		if (!user) {
+			setDayEvents(events);
+		} else if (user) {
+			setDayEvents(invited);
+		}
+	}, [savedEvents, day, user]);
 
 	return (
 		<TouchableOpacity

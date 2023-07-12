@@ -384,7 +384,7 @@ export const calendarSlice = createSlice({
 				);
 				state.loading = false;
 				if (alreadyInvited) {
-					state.errors = { invited: 'Guest already invited' };
+					state.errors = { guest: 'Guest already invited' };
 				} else {
 					state.invitedGuests = [...state.invitedGuests, action.payload];
 				}
