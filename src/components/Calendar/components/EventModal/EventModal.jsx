@@ -193,7 +193,14 @@ const EventModal = () => {
 				time: eventTime,
 				location: eventLoc,
 				label: selectedLabel,
-				...(invitedGuests.length > 0 && { invitedGuests }),
+				invitedGuests: [
+					{
+						_id: user?._id,
+						firstName: user?.firstName,
+						lastName: user?.lastName,
+					},
+					...invitedGuests,
+				],
 			};
 			dispatch(createEvent(data));
 		} else if (selectedEvent && eventAuthor === currentUser) {
@@ -398,79 +405,81 @@ const EventModal = () => {
 														</IconBtn>
 													)}
 												</ListItem>
-												{invitedGuests?.map((item) => {
-													if (item?.firstName) {
-														return (
-															<ListItem
-																disablePadding
-																style={{
-																	borderBottom: '1px solid grey',
-																	marginTop: '10px',
-																}}
-																key={item._id}
-															>
-																<ListItemText
-																	primary={`${item.firstName} ${item.lastName}`}
-																/>
-																{selectedEvent &&
-																	eventAuthor === currentUser && (
-																		<IconBtn
-																			tooltip='Send Invite'
-																			placement='top'
-																			onClick={() => handleInvite(item)}
-																		>
-																			<SendToMobileIcon htmlColor='steelblue' />
-																		</IconBtn>
-																	)}
-																<IconBtn
-																	tooltip='Delete Guest'
-																	placement='top'
-																	onClick={() =>
-																		dispatch(removeInvitedGuest(item))
-																	}
+												{invitedGuests
+													?.filter((item) => item._id !== user._id)
+													.map((item) => {
+														if (item?.firstName) {
+															return (
+																<ListItem
+																	disablePadding
+																	style={{
+																		borderBottom: '1px solid grey',
+																		marginTop: '10px',
+																	}}
+																	key={item._id}
 																>
-																	<DeleteIcon htmlColor='red' />
-																</IconBtn>
-															</ListItem>
-														);
-													} else {
-														return (
-															<ListItem
-																disablePadding
-																style={{
-																	borderBottom: '1px solid grey',
-																	marginTop: '10px',
-																}}
-																key={item._id}
-															>
-																<ListItemText
-																	primary={
-																		item?.phone ? item?.phone : item?.email
-																	}
-																/>
-																{selectedEvent &&
-																	eventAuthor === currentUser && (
-																		<IconBtn
-																			tooltip='Send Invite'
-																			placement='top'
-																			onClick={() => handleInvite(item)}
-																		>
-																			<SendToMobileIcon htmlColor='steelblue' />
-																		</IconBtn>
-																	)}
-																<IconBtn
-																	tooltip='Delete Guest'
-																	placement='top'
-																	onClick={() =>
-																		dispatch(removeInvitedGuest(item))
-																	}
+																	<ListItemText
+																		primary={`${item.firstName} ${item.lastName}`}
+																	/>
+																	{selectedEvent &&
+																		eventAuthor === currentUser && (
+																			<IconBtn
+																				tooltip='Send Invite'
+																				placement='top'
+																				onClick={() => handleInvite(item)}
+																			>
+																				<SendToMobileIcon htmlColor='steelblue' />
+																			</IconBtn>
+																		)}
+																	<IconBtn
+																		tooltip='Delete Guest'
+																		placement='top'
+																		onClick={() =>
+																			dispatch(removeInvitedGuest(item))
+																		}
+																	>
+																		<DeleteIcon htmlColor='red' />
+																	</IconBtn>
+																</ListItem>
+															);
+														} else {
+															return (
+																<ListItem
+																	disablePadding
+																	style={{
+																		borderBottom: '1px solid grey',
+																		marginTop: '10px',
+																	}}
+																	key={item._id}
 																>
-																	<DeleteIcon htmlColor='red' />
-																</IconBtn>
-															</ListItem>
-														);
-													}
-												})}
+																	<ListItemText
+																		primary={
+																			item?.phone ? item?.phone : item?.email
+																		}
+																	/>
+																	{selectedEvent &&
+																		eventAuthor === currentUser && (
+																			<IconBtn
+																				tooltip='Send Invite'
+																				placement='top'
+																				onClick={() => handleInvite(item)}
+																			>
+																				<SendToMobileIcon htmlColor='steelblue' />
+																			</IconBtn>
+																		)}
+																	<IconBtn
+																		tooltip='Delete Guest'
+																		placement='top'
+																		onClick={() =>
+																			dispatch(removeInvitedGuest(item))
+																		}
+																	>
+																		<DeleteIcon htmlColor='red' />
+																	</IconBtn>
+																</ListItem>
+															);
+														}
+													})}
 											</List>
 										)}
 									</div>
