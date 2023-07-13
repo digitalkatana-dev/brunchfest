@@ -251,7 +251,7 @@ const EventModal = () => {
 					sx={{ m: 1, minWidth: 120 }}
 					size='small'
 				>
-					{user && (
+					{user ? (
 						<>
 							{!selectedEvent ||
 							(selectedEvent && eventAuthor === currentUser) ? (
@@ -542,8 +542,45 @@ const EventModal = () => {
 								</>
 							)}
 						</>
-					)}
-					{!user && <DialogContentText>Sign in to RSVP!</DialogContentText>}
+					) : !user ? (
+						<>
+							<DialogContentText
+								style={{
+									textAlign: 'center',
+									marginTop: '5px',
+									marginBottom: '5px',
+								}}
+							>
+								{selectedEvent?.type} @ {selectedEvent?.location}
+							</DialogContentText>
+							<DialogContentText
+								style={{
+									textAlign: 'center',
+									marginTop: '5px',
+									marginBottom: '5px',
+									fontWeight: 'bold',
+								}}
+							>
+								{' '}
+								Sign in to RSVP!
+							</DialogContentText>
+							<TextField
+								disabled
+								sx={{ marginTop: '15px' }}
+								size='small'
+								label='Headcount'
+								variant='standard'
+								InputProps={{
+									startAdornment: (
+										<InputAdornment position='start'>
+											<GroupAddIcon className='icon' />
+										</InputAdornment>
+									),
+								}}
+							/>
+						</>
+					) : null}
+					{/* {!user && <DialogContentText>Sign in to RSVP!</DialogContentText>} */}
 				</FormControl>
 			</DialogContent>
 			{user && (
